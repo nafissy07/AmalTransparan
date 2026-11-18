@@ -12,102 +12,322 @@ from streamlit_js_eval import streamlit_js_eval
 st.set_page_config(
     page_title="AmalTransparan",
     page_icon="🤝",
-    layout="wide"
+    layout="centered"
 )
 
 # ==========================================
-# DESAIN CSS - AMALTRANSPARAN
+# DESAIN CSS - AMALTRANSPARAN (HIJAU TUA & PUTIH)
 # ==========================================
 
 st.markdown("""
 <style>
-/* BACKGROUND APLIKASI */
-.stApp {
-    background-color: #F1F5F9 !important;
-    color: #243447 !important;
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* FONT */
+.stApp, .stApp p, .stApp label, .stApp li, .stApp h1, .stApp h2,
+.stApp h3, .stApp h4, .stApp h5, .stApp h6, .stApp button,
+.stApp input, .stApp textarea {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
 }
 
+/* BACKGROUND: PUTIH - HIJAU TUA DENGAN GARIS HITAM */
+.stApp {
+    background-color: #F6FAF8 !important;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.065) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.065) 1px, transparent 1px),
+        radial-gradient(circle at 10% 6%, rgba(6, 78, 59, 0.22), transparent 38%),
+        radial-gradient(circle at 92% 94%, rgba(4, 120, 87, 0.20), transparent 42%),
+        linear-gradient(160deg, #FFFFFF 0%, #EEF6F2 100%) !important;
+    background-size: 44px 44px, 44px 44px, 100% 100%, 100% 100%, 100% 100% !important;
+    background-attachment: fixed !important;
+    color: #1F3A30 !important;
+}
+
+[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+/* FEED ALA INSTAGRAM (KOLOM TENGAH) */
 .block-container {
-    max-width: 1250px;
-    padding-top: 2rem;
+    max-width: 780px !important;
+    padding-top: 1.5rem;
     padding-bottom: 3rem;
 }
 
 /* JUDUL */
 h1, h2, h3, h4, h5, h6 {
-    color: #163A5F !important;
-    font-weight: 700 !important;
+    color: #064E3B !important;
+    font-weight: 800 !important;
+}
+
+/* JUDUL BAGIAN (CHIP PUTIH) */
+h2 {
+    font-size: 1.2rem !important;
+    background-color: #FFFFFF;
+    border: 1px solid #CFE5DA;
+    border-left: 6px solid #065F46;
+    border-radius: 999px;
+    padding: 8px 18px !important;
+    width: fit-content;
+    box-shadow: 0 2px 8px rgba(6, 78, 59, 0.08);
+    margin-top: 0.4rem;
 }
 
 /* TEKS UMUM */
 p, li, label {
-    color: #243447;
+    color: #1F3A30;
 }
 
-/* TEKS MARKDOWN */
 [data-testid="stMarkdownContainer"] p,
 [data-testid="stMarkdownContainer"] li {
-    color: #243447;
+    color: #1F3A30;
 }
 
 /* LABEL INPUT */
 [data-testid="stWidgetLabel"] p {
-    color: #1E3A5F !important;
+    color: #064E3B !important;
     font-weight: 600 !important;
 }
 
 .stCaption,
 [data-testid="stCaptionContainer"] {
-    color: #526477 !important;
+    color: #4B6358 !important;
 }
 
 /* ===== JUDUL DAN DESKRIPSI BAGIAN ===== */
 .section-heading {
-    color: #163A5F;
-    font-size: 1.5rem;
-    font-weight: 700;
+    display: inline-block;
+    color: #064E3B;
+    background-color: #FFFFFF;
+    border: 1px solid #CFE5DA;
+    border-left: 6px solid #065F46;
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 1.2rem;
+    font-weight: 800;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    box-shadow: 0 2px 8px rgba(6, 78, 59, 0.08);
 }
 
 .section-description {
-    color: #526477;
-    font-size: 0.95rem;
+    color: #4B6358;
+    font-size: 0.92rem;
     margin-bottom: 1rem;
+}
+
+/* ===== KARTU PROFIL (HERO) ===== */
+.profile-card {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 88% 12%, rgba(255, 255, 255, 0.16), transparent 42%),
+        radial-gradient(circle at 5% 100%, rgba(110, 231, 183, 0.18), transparent 40%),
+        linear-gradient(135deg, #032B20 0%, #064E3B 55%, #047857 100%);
+    border-radius: 28px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 20px 44px rgba(3, 43, 32, 0.35);
+}
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.avatar-ring {
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    padding: 4px;
+    background: conic-gradient(
+        from 210deg,
+        #ECFDF5, #6EE7B7, #FFFFFF, #6EE7B7, #ECFDF5
+    );
+}
+
+.avatar-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    border: 3px solid #064E3B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.profile-kicker {
+    color: #6EE7B7;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.profile-name {
+    color: #FFFFFF;
+    font-size: 30px;
+    font-weight: 800;
+    margin: 2px 0;
+    line-height: 1.2;
+}
+
+.profile-tagline {
+    color: #ECFDF5;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.profile-desc {
+    color: rgba(236, 253, 245, 0.82);
+    font-size: 13.5px;
+    line-height: 1.7;
+    margin-top: 18px;
+}
+
+.profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.profile-tag {
+    color: #ECFDF5;
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+/* ===== MENU FITUR (GESER SAMPING, GAYA INSTAGRAM) ===== */
+.menu-title {
+    color: #064E3B;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin: 6px 0 0 4px;
+}
+
+.menu-hint {
+    color: #4B6358;
+    font-size: 12px;
+    margin: 0 0 2px 4px;
+}
+
+div[data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    gap: 10px !important;
+    padding: 8px 4px 16px 4px;
+    scrollbar-width: thin;
+    scrollbar-color: #065F46 transparent;
+}
+
+div[data-testid="stRadio"] label[data-baseweb="radio"] {
+    flex: 0 0 auto;
+    margin: 0 !important;
+    padding: 11px 20px !important;
+    background-color: #FFFFFF;
+    border: 1.5px solid #CFE5DA;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(6, 78, 59, 0.08);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Sembunyikan bulatan radio bawaan */
+div[data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child {
+    display: none !important;
+}
+
+div[data-testid="stRadio"] label[data-baseweb="radio"] p {
+    margin: 0 !important;
+    color: #064E3B !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    white-space: nowrap;
+}
+
+div[data-testid="stRadio"] label[data-baseweb="radio"]:hover {
+    transform: translateY(-2px);
+    border-color: #065F46;
+    box-shadow: 0 8px 18px rgba(6, 78, 59, 0.16);
+}
+
+/* Menu yang sedang dipilih */
+div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {
+    background: linear-gradient(135deg, #032B20, #065F46) !important;
+    border-color: #032B20 !important;
+    box-shadow: 0 10px 22px rgba(3, 43, 32, 0.38);
+}
+
+div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) p,
+div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) * {
+    color: #FFFFFF !important;
 }
 
 /* ===== KARTU DASHBOARD ===== */
 [data-testid="stMetric"] {
     background-color: #FFFFFF;
-    padding: 22px;
-    border-radius: 14px;
-    border: 1px solid #CBD5E1;
-    box-shadow: 0 4px 12px rgba(22, 58, 95, 0.06);
+    padding: 20px;
+    border-radius: 18px;
+    border: 1px solid #CFE5DA;
+    border-left: 6px solid #065F46;
+    box-shadow: 0 6px 16px rgba(6, 78, 59, 0.09);
+    transition: all 0.2s ease;
+}
+
+[data-testid="stMetric"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(6, 78, 59, 0.16);
 }
 
 [data-testid="stMetricLabel"],
 [data-testid="stMetricLabel"] * {
-    color: #526477 !important;
+    color: #4B6358 !important;
     font-weight: 600 !important;
 }
 
 [data-testid="stMetricValue"],
 [data-testid="stMetricValue"] * {
-    color: #163A5F !important;
-    font-weight: 700 !important;
+    color: #064E3B !important;
+    font-weight: 800 !important;
 }
 
 /* ===== KARTU GRAFIK ===== */
 [data-testid="stVegaLiteChart"] {
     background-color: #FFFFFF;
     padding: 18px;
-    border-radius: 14px;
-    border: 1px solid #CBD5E1;
+    border-radius: 18px;
+    border: 1px solid #CFE5DA;
+    box-shadow: 0 6px 16px rgba(6, 78, 59, 0.09);
+}
+
+/* ===== KARTU POSTINGAN (CONTAINER BERBORDER) ===== */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: #FFFFFF;
+    border: 1px solid #CFE5DA !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 24px rgba(6, 78, 59, 0.09);
+}
+
+[data-testid="stForm"] {
+    border: none !important;
+    padding: 0 !important;
 }
 
 /* ===== KOTAK INFORMASI ===== */
 [data-testid="stAlert"] {
-    border-radius: 10px;
+    border-radius: 14px;
 }
 
 /* ===== FORM INPUT ===== */
@@ -115,47 +335,55 @@ p, li, label {
 .stNumberInput input,
 .stTextArea textarea,
 .stDateInput input {
-    background-color: #FFFFFF !important;
-    color: #243447 !important;
-    border: 1px solid #A8B8CA !important;
-    border-radius: 8px !important;
+    background-color: #F7FBF9 !important;
+    color: #1F3A30 !important;
+    border: 1px solid #BFD8CB !important;
+    border-radius: 12px !important;
+}
+
+.stTextInput input:focus,
+.stNumberInput input:focus,
+.stTextArea textarea:focus {
+    border-color: #065F46 !important;
+    box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.20) !important;
 }
 
 /* Placeholder */
 .stTextInput input::placeholder,
 .stTextArea textarea::placeholder {
-    color: #64748B !important;
+    color: #6B8277 !important;
     opacity: 1 !important;
 }
 
 /* ===== DROPDOWN ===== */
 [data-baseweb="select"] > div {
-    background-color: #FFFFFF !important;
-    border-color: #A8B8CA !important;
+    background-color: #F7FBF9 !important;
+    border-color: #BFD8CB !important;
+    border-radius: 12px !important;
 }
 
 [data-baseweb="select"] * {
-    color: #243447 !important;
+    color: #1F3A30 !important;
 }
 
 /* ==========================================
-   TOMBOL BIRU
+   TOMBOL HIJAU TUA
    ========================================== */
 
 .stButton > button,
 .stFormSubmitButton > button,
 .stDownloadButton > button {
-    background-color: #2563EB !important;
+    background: linear-gradient(135deg, #064E3B, #047857) !important;
     color: #FFFFFF !important;
     -webkit-text-fill-color: #FFFFFF !important;
-    border: 1px solid #2563EB !important;
-    border-radius: 10px !important;
+    border: none !important;
+    border-radius: 12px !important;
     padding: 10px 20px !important;
     font-weight: 700 !important;
+    box-shadow: 0 6px 14px rgba(6, 78, 59, 0.30);
     transition: all 0.2s ease;
 }
 
-/* Memastikan tulisan dan ikon tombol putih */
 .stButton > button *,
 .stFormSubmitButton > button *,
 .stDownloadButton > button * {
@@ -163,20 +391,19 @@ p, li, label {
     -webkit-text-fill-color: #FFFFFF !important;
 }
 
-/* Efek ketika kursor diarahkan ke tombol */
 .stButton > button:hover,
 .stFormSubmitButton > button:hover,
 .stDownloadButton > button:hover {
-    background-color: #1D4ED8 !important;
-    border-color: #1D4ED8 !important;
+    background: linear-gradient(135deg, #032B20, #065F46) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(6, 78, 59, 0.38);
     color: #FFFFFF !important;
 }
 
-/* Tombol yang tidak aktif */
 .stButton > button:disabled,
 .stFormSubmitButton > button:disabled {
-    background-color: #94A3B8 !important;
-    border-color: #94A3B8 !important;
+    background: #9CB2A5 !important;
+    box-shadow: none;
     color: #FFFFFF !important;
 }
 
@@ -184,13 +411,15 @@ p, li, label {
 [data-testid="stDataFrame"],
 [data-testid="stTable"] {
     background-color: #FFFFFF;
-    border: 1px solid #CBD5E1;
-    border-radius: 12px;
+    border: 1px solid #CFE5DA;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(6, 78, 59, 0.09);
 }
 
 /* ===== SIDEBAR ===== */
 [data-testid="stSidebar"] {
-    background-color: #E7EEF7;
+    background-color: #E7F2EC;
 }
 
 /* ==========================================
@@ -199,20 +428,19 @@ p, li, label {
 
 [data-testid="stCode"],
 .stCode {
-    background-color: #EFF6FF !important;
-    border: 1px solid #BFDBFE !important;
-    border-radius: 10px !important;
+    background-color: #ECF6F0 !important;
+    border: 1px solid #BFDCCB !important;
+    border-radius: 12px !important;
     overflow-wrap: anywhere !important;
 }
 
-/* Teks alamat wallet dan kode */
 [data-testid="stCode"] code,
 [data-testid="stCode"] pre,
 .stCode code,
 .stCode pre {
-    color: #1D4ED8 !important;
-    -webkit-text-fill-color: #1D4ED8 !important;
-    background-color: #EFF6FF !important;
+    color: #064E3B !important;
+    -webkit-text-fill-color: #064E3B !important;
+    background-color: #ECF6F0 !important;
     white-space: pre-wrap !important;
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
@@ -222,263 +450,271 @@ p, li, label {
 .metamask-section {
     background-color: #FFFFFF;
     padding: 22px;
-    border-radius: 14px;
-    border: 1px solid #CBD5E1;
+    border-radius: 18px;
+    border: 1px solid #CFE5DA;
     margin-bottom: 20px;
 }
 
 /* ===== LINK ===== */
 a {
-    color: #2563EB !important;
+    color: #047857 !important;
     font-weight: 600;
 }
 
 /* ===== GARIS PEMBATAS ===== */
 hr {
-    border-color: #CBD5E1 !important;
+    border-color: rgba(6, 78, 59, 0.18) !important;
+    margin: 1.6rem 0 !important;
 }
 
 /* ===== FOOTER ===== */
 .footer {
-    color: #526477;
+    color: #4B6358;
     text-align: center;
-    padding: 20px 0;
+    padding: 20px;
     line-height: 1.8;
+    background-color: #FFFFFF;
+    border: 1px solid #CFE5DA;
+    border-radius: 20px;
 }
 
 .footer b {
-    color: #163A5F;
+    color: #064E3B;
 }
 
-/* NAVIGASI DAN TAMPILAN MODERN */
-.welcome-line { background: linear-gradient(120deg,#103f35,#168568); padding: 22px 26px; border-radius: 16px; margin: 8px 0 22px; color: #fff; }
-.welcome-line span { color:#bce8d3; font-size:11px; font-weight:800; letter-spacing:2px; }
-.welcome-line h2 { color:#fff !important; margin:8px 0 4px; font-size:25px; }
-.welcome-line p { color:#e2f5ec !important; margin:0; }
-.stTabs [data-baseweb="tab-list"] { gap:7px; background:#e5edf2; padding:8px; border-radius:14px; }
-.stTabs [data-baseweb="tab"] { border-radius:10px; padding:10px 15px; background:#f8fafc; color:#29445b; font-weight:700; }
-.stTabs [aria-selected="true"] { background:#16785e !important; color:white !important; }
-.stTabs [data-baseweb="tab-highlight"] { background:transparent; }
-.stTabs [data-baseweb="tab-border"] { background:transparent; }
-[data-testid="stVerticalBlockBorderWrapper"] { border-radius:15px; border-color:#d8e3e8; }
+/* ===== TAMPILAN PONSEL ===== */
+@media (max-width: 640px) {
+    .profile-top {
+        flex-direction: column;
+        text-align: center;
+    }
 
+    .profile-tags {
+        justify-content: center;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# HERO SECTION
+# HERO SECTION (KARTU PROFIL)
 # ==========================================
 
 
 st.html("""
-<div style="
-    background: linear-gradient(120deg, #145C48, #23866A);
-    padding: 35px;
-    border-radius: 18px;
-    margin-bottom: 25px;
-">
-    <p style="
-        color: #BCE8D3;
-        font-size: 12px;
-        font-weight: bold;
-        letter-spacing: 2px;
-    ">
-        BLOCKCHAIN DONATION PLATFORM
-    </p>
-
-    <h1 style="
-        color: white;
-        font-size: 38px;
-        margin-bottom: 10px;
-    ">
-        🤝 AmalTransparan
-    </h1>
-
-    <p style="
-        color: white;
-        font-size: 19px;
-        font-weight: bold;
-    ">
-        Transparansi Donasi, Membangun Kepercayaan.
-    </p>
-
-    <p style="
-        color: #E2F5EC;
-        font-size: 15px;
-    ">
-        Platform transparansi donasi berbasis blockchain
-        untuk memantau pencatatan bantuan dan penyaluran
-        secara terbuka.
-    </p>
+<div class="profile-card">
+<div class="profile-top">
+<div class="avatar-ring"><div class="avatar-inner">🤝</div></div>
+<div>
+<div class="profile-kicker">BLOCKCHAIN DONATION PLATFORM</div>
+<div class="profile-name">AmalTransparan</div>
+<div class="profile-tagline">Transparansi Donasi, Membangun Kepercayaan.</div>
+</div>
+</div>
+<div class="profile-desc">
+Platform transparansi donasi berbasis blockchain
+untuk memantau pencatatan bantuan dan penyaluran
+secara terbuka.
+</div>
+<div class="profile-tags">
+<span class="profile-tag">⛓️ Hardhat Local</span>
+<span class="profile-tag">🔐 Smart Contract</span>
+<span class="profile-tag">🖼️ NFT Bukti Donasi</span>
+</div>
 </div>
 """)
 
 
 # ==========================================
-# NAVIGASI HALAMAN
+# MENU FITUR (GESER KE SAMPING)
 # ==========================================
-st.markdown("""<div class="welcome-line"><span>PLATFORM DONASI DIGITAL</span><h2>Selamat datang di AmalTransparan 👋</h2><p>Pilih menu untuk mengelola dan memantau donasi berbasis blockchain.</p></div>""", unsafe_allow_html=True)
 
-tab_wallet, tab_donasi, tab_kelola, tab_verifikasi, tab_dashboard, tab_riwayat, tab_blockchain = st.tabs([
-    "🦊 Wallet", "💚 Donasi", "🛠️ Pengelolaan", "🔍 Verifikasi",
-    "📊 Dashboard", "📋 Riwayat", "⛓️ Blockchain"
-])
+M_BERANDA = "🏠 Beranda"
+M_DONASI = "💚 Donasi"
+M_KELOLA = "📝 Kelola"
+M_SALURKAN = "📦 Salurkan"
+M_VERIFIKASI = "🔍 Verifikasi"
+M_PENGAWAS = "🛡️ Pengawas"
+M_RIWAYAT = "📋 Riwayat"
+M_INFO = "🔗 Info"
+
+st.markdown(
+    '<div class="menu-title">PILIH FITUR</div>'
+    '<div class="menu-hint">Geser ke samping, lalu pilih fitur yang ingin dibuka.</div>',
+    unsafe_allow_html=True
+)
+
+menu_pilihan = st.radio(
+    "Menu Fitur",
+    [
+        M_BERANDA,
+        M_DONASI,
+        M_KELOLA,
+        M_SALURKAN,
+        M_VERIFIKASI,
+        M_PENGAWAS,
+        M_RIWAYAT,
+        M_INFO,
+    ],
+    horizontal=True,
+    label_visibility="collapsed",
+    key="menu_fitur"
+)
 
 
 # ==========================================
-with tab_wallet:
-    # INTEGRASI METAMASK
-    # ==========================================
+# INTEGRASI METAMASK
+# ==========================================
 
-    st.markdown(
-        '<div class="section-heading">🦊 Hubungkan MetaMask</div>',
-        unsafe_allow_html=True
-    )
+st.markdown(
+    '<div class="section-heading">🦊 Hubungkan MetaMask</div>',
+    unsafe_allow_html=True
+)
 
-    st.markdown(
-        '<div class="section-description">'
-        'Hubungkan wallet untuk melihat alamat akun dan saldo ETH.'
-        '</div>',
-        unsafe_allow_html=True
-    )
+st.markdown(
+    '<div class="section-description">'
+    'Hubungkan wallet untuk melihat alamat akun dan saldo ETH.'
+    '</div>',
+    unsafe_allow_html=True
+)
 
-    if "wallet_request_id" not in st.session_state:
-        st.session_state.wallet_request_id = 0
+if "wallet_request_id" not in st.session_state:
+    st.session_state.wallet_request_id = 0
 
-    if "wallet_data" not in st.session_state:
-        st.session_state.wallet_data = None
+if "wallet_data" not in st.session_state:
+    st.session_state.wallet_data = None
 
-    if st.button("🦊 Hubungkan MetaMask", type="primary"):
-        st.session_state.wallet_request_id += 1
+if st.button("🦊 Hubungkan MetaMask", type="primary"):
+    st.session_state.wallet_request_id += 1
 
-    if st.session_state.wallet_request_id > 0:
+if st.session_state.wallet_request_id > 0:
 
-        request_id = st.session_state.wallet_request_id
+    request_id = st.session_state.wallet_request_id
 
-        javascript = f"""
-        (async () => {{
-            const provider =
-                window.parent.ethereum || window.ethereum;
+    javascript = f"""
+    (async () => {{
+        const provider =
+            window.parent.ethereum || window.ethereum;
 
-            if (!provider) {{
+        if (!provider) {{
+            return JSON.stringify({{
+                error: "MetaMask tidak ditemukan. Buka aplikasi melalui Chrome."
+            }});
+        }}
+
+        try {{
+            const accounts = await provider.request({{
+                method: "eth_requestAccounts"
+            }});
+
+            if (!accounts || accounts.length === 0) {{
                 return JSON.stringify({{
-                    error: "MetaMask tidak ditemukan. Buka aplikasi melalui Chrome."
+                    error: "Belum ada akun MetaMask yang terhubung."
                 }});
             }}
 
-            try {{
-                const accounts = await provider.request({{
-                    method: "eth_requestAccounts"
-                }});
+            const account = accounts[0];
 
-                if (!accounts || accounts.length === 0) {{
-                    return JSON.stringify({{
-                        error: "Belum ada akun MetaMask yang terhubung."
-                    }});
-                }}
+            const chainId = await provider.request({{
+                method: "eth_chainId"
+            }});
 
-                const account = accounts[0];
+            const balanceHex = await provider.request({{
+                method: "eth_getBalance",
+                params: [account, "latest"]
+            }});
 
-                const chainId = await provider.request({{
-                    method: "eth_chainId"
-                }});
+            const balanceWei = BigInt(balanceHex);
+            const balanceEth =
+                Number(balanceWei) / 1000000000000000000;
 
-                const balanceHex = await provider.request({{
-                    method: "eth_getBalance",
-                    params: [account, "latest"]
-                }});
+            return JSON.stringify({{
+                account: account,
+                chainId: parseInt(chainId, 16),
+                balanceEth: balanceEth.toFixed(6)
+            }});
 
-                const balanceWei = BigInt(balanceHex);
-                const balanceEth =
-                    Number(balanceWei) / 1000000000000000000;
+        }} catch (error) {{
+            return JSON.stringify({{
+                error: error.message
+            }});
+        }}
+    }})()
+    // request_id: {request_id}
+    """
 
-                return JSON.stringify({{
-                    account: account,
-                    chainId: parseInt(chainId, 16),
-                    balanceEth: balanceEth.toFixed(6)
-                }});
+else:
+    javascript = "null"
 
-            }} catch (error) {{
-                return JSON.stringify({{
-                    error: error.message
-                }});
-            }}
-        }})()
-        // request_id: {request_id}
-        """
+hasil_wallet = streamlit_js_eval(
+    js_expressions=javascript,
+    want_output=True,
+    key="AMALTRANSPARAN_METAMASK"
+)
 
-    else:
-        javascript = "null"
+if hasil_wallet and hasil_wallet != "null":
 
-    hasil_wallet = streamlit_js_eval(
-        js_expressions=javascript,
-        want_output=True,
-        key="AMALTRANSPARAN_METAMASK"
-    )
-
-    if hasil_wallet and hasil_wallet != "null":
-
-        try:
-            if isinstance(hasil_wallet, str):
-                data_wallet = json.loads(hasil_wallet)
-            else:
-                data_wallet = hasil_wallet
-
-            if isinstance(data_wallet, dict):
-                st.session_state.wallet_data = data_wallet
-
-        except Exception:
-            st.warning("Hasil koneksi MetaMask belum dapat dibaca.")
-
-    wallet = st.session_state.wallet_data
-
-    if wallet:
-
-        if "error" in wallet:
-
-            st.error("Koneksi MetaMask gagal.")
-            st.warning(wallet["error"])
-
+    try:
+        if isinstance(hasil_wallet, str):
+            data_wallet = json.loads(hasil_wallet)
         else:
+            data_wallet = hasil_wallet
 
-            st.success("MetaMask berhasil terhubung!")
+        if isinstance(data_wallet, dict):
+            st.session_state.wallet_data = data_wallet
 
-            alamat_wallet = wallet["account"]
-            chain_id_wallet = wallet["chainId"]
-            saldo_wallet = wallet["balanceEth"]
+    except Exception:
+        st.warning("Hasil koneksi MetaMask belum dapat dibaca.")
 
-            col_wallet1, col_wallet2 = st.columns(2)
+wallet = st.session_state.wallet_data
 
-            with col_wallet1:
-                st.metric(
-                    "💳 Saldo ETH Wallet",
-                    f"{saldo_wallet} ETH"
-                )
+if wallet:
 
-            with col_wallet2:
-                st.metric(
-                    "🌐 Chain ID Wallet",
-                    chain_id_wallet
-                )
+    if "error" in wallet:
 
-            st.write("**Alamat Wallet:**")
-            st.code(alamat_wallet)
-
-            if chain_id_wallet == 31337:
-                st.success("Jaringan sesuai: Hardhat Local.")
-            else:
-                st.warning(
-                    "Pilih jaringan Hardhat Local pada MetaMask."
-                )
+        st.error("Koneksi MetaMask gagal.")
+        st.warning(wallet["error"])
 
     else:
-        st.info(
-            "Belum ada wallet yang terhubung. "
-            "Klik tombol Hubungkan MetaMask untuk memulai."
-        )
+
+        st.success("MetaMask berhasil terhubung!")
+
+        alamat_wallet = wallet["account"]
+        chain_id_wallet = wallet["chainId"]
+        saldo_wallet = wallet["balanceEth"]
+
+        col_wallet1, col_wallet2 = st.columns(2)
+
+        with col_wallet1:
+            st.metric(
+                "💳 Saldo ETH Wallet",
+                f"{saldo_wallet} ETH"
+            )
+
+        with col_wallet2:
+            st.metric(
+                "🌐 Chain ID Wallet",
+                chain_id_wallet
+            )
+
+        st.write("**Alamat Wallet:**")
+        st.code(alamat_wallet)
+
+        if chain_id_wallet == 31337:
+            st.success("Jaringan sesuai: Hardhat Local.")
+        else:
+            st.warning(
+                "Pilih jaringan Hardhat Local pada MetaMask."
+            )
+
+else:
+    st.info(
+        "Belum ada wallet yang terhubung. "
+        "Klik tombol Hubungkan MetaMask untuk memulai."
+    )
 
 
-    st.divider()
+st.divider()
 
 # ==========================================
 # KONEKSI SMART CONTRACT
@@ -492,14 +728,158 @@ def koneksi_kontrak():
 try:
 
     w3, kontrak = koneksi_kontrak()
-    
-    
+
+    st.success("Blockchain Hardhat berhasil terhubung!")
+
+    alamat_pengelola = kontrak.functions.pengelola().call()
+
     # ==========================================
-    with tab_donasi:
-        # FORM DONASI - INTEGRASI SMART CONTRACT
-        # ==========================================
+    # MEMBACA DATA DONASI DARI SMART CONTRACT
+    # ==========================================
+
+    seluruh_id = []
+
+    event_donasi = kontrak.events.DonationCreated()
+
+    try:
+        log_donasi = event_donasi.get_logs(
+            from_block=0,
+            to_block="latest"
+        )
+
+        seluruh_id = sorted({
+            int(log["args"]["donationId"])
+            for log in log_donasi
+        })
+
+    except Exception as error:
+        st.warning(
+            "Riwayat event belum dapat dibaca: " + str(error)
+        )
+
+    daftar_donasi = []
+
+    for donation_id in seluruh_id:
+
+        try:
+
+            data = kontrak.functions.getDonation(
+                donation_id
+            ).call()
+
+            daftar_donasi.append({
+                "ID": data[0],
+                "Kampanye": data[1],
+                "Donatur": data[2],
+                "Alamat Donatur": data[3],
+                "Jumlah": int(data[4]),
+                "Tujuan": data[5],
+                "Status": data[6],
+                "Timestamp": int(data[7])
+            })
+
+        except Exception as error:
+            st.warning(
+                f"Donasi ID {donation_id} gagal dibaca: {error}"
+            )
+
+    data_donasi = pd.DataFrame(daftar_donasi)
+
+
+    # ==========================================
+    # MENU: BERANDA (RINGKASAN + STATISTIK)
+    # ==========================================
+
+    if menu_pilihan == M_BERANDA:
+
+        st.markdown(
+            '<div class="section-heading">📈 Ringkasan Donasi</div>',
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            '<div class="section-description">'
+            'Ikhtisar catatan donasi yang tersimpan pada blockchain.'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        if not data_donasi.empty:
+
+            total_donasi = int(data_donasi["Jumlah"].sum())
+
+            jumlah_kampanye = data_donasi["Kampanye"].nunique()
+
+            jumlah_terverifikasi = int(
+                (data_donasi["Status"] == 3).sum()
+            )
+
+        else:
+
+            total_donasi = 0
+            jumlah_kampanye = 0
+            jumlah_terverifikasi = 0
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric(
+                "💰 Total Donasi Tercatat",
+                f"Rp {total_donasi:,}".replace(",", ".")
+            )
+
+        with col2:
+            st.metric(
+                "📢 Jumlah Kampanye",
+                jumlah_kampanye
+            )
+
+        with col3:
+            st.metric(
+                "🔍 Donasi Terverifikasi",
+                jumlah_terverifikasi
+            )
+
+        st.caption(
+            "Catatan: nominal merupakan data yang tersimpan "
+            "dalam smart contract, bukan bukti transfer uang."
+        )
 
         st.divider()
+
+        st.markdown(
+            '<div class="section-heading">📊 Statistik Donasi</div>',
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            '<div class="section-description">'
+            'Visualisasi nominal donasi berdasarkan kampanye.'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        if not data_donasi.empty:
+
+            data_grafik = (
+                data_donasi.groupby("Kampanye")["Jumlah"]
+                .sum()
+                .to_frame()
+            )
+
+            st.bar_chart(data_grafik, color="#065F46")
+
+        else:
+            st.info(
+                "Belum ada donasi yang tercatat di smart contract."
+            )
+
+
+    # ==========================================
+    # MENU: FORM DONASI - INTEGRASI SMART CONTRACT
+    # ==========================================
+
+    elif menu_pilihan == M_DONASI:
 
         st.markdown("## 💚 Form Donasi")
         st.caption(
@@ -542,7 +922,7 @@ try:
             "Kode kontrak saat ini belum melakukan transfer ETH."
         )
 
-    
+
         if submit_donasi:
 
             wallet = st.session_state.get("wallet_data")
@@ -671,191 +1051,12 @@ try:
                     st.code(str(error))
 
 
-
-        st.success("Blockchain Hardhat berhasil terhubung!")
-
-        alamat_pengelola = kontrak.functions.pengelola().call()
-    
-    
-        # ==========================================
-    with tab_kelola:
-        # PENDAFTARAN ALAMAT PENGAWAS
-        # ==========================================
-
-        st.divider()
-        st.markdown("## 🛡️ Pendaftaran Pengawas")
-
-        alamat_pengawas_terdaftar = kontrak.functions.pengawas().call()
-
-        st.write("Alamat pengawas saat ini:")
-        st.code(
-            alamat_pengawas_terdaftar
-            if alamat_pengawas_terdaftar != "0x0000000000000000000000000000000000000000"
-            else "Belum ada pengawas terdaftar"
-        )
-
-        with st.container(border=True):
-            with st.form("form_daftar_pengawas"):
-                alamat_pengawas_baru = st.text_input(
-                    "Alamat Wallet Pengawas",
-                    value="0x5eaFb8348d346e70C36154D9b80fc0228273E799"
-                )
-
-                submit_pengawas = st.form_submit_button(
-                    "🛡️ Daftarkan Pengawas",
-                    use_container_width=True
-                )
-
-        if submit_pengawas:
-            wallet_pengelola = st.session_state.get("wallet_data")
-
-            if not wallet_pengelola or "account" not in wallet_pengelola:
-                st.error("Hubungkan MetaMask terlebih dahulu.")
-
-            elif wallet_pengelola.get("chainId") != 31337:
-                st.error("Pilih jaringan Hardhat Local.")
-
-            elif wallet_pengelola["account"].lower() != alamat_pengelola.lower():
-                st.error("Gunakan akun MetaMask milik pengelola.")
-
-            else:
-                try:
-                    alamat_valid = w3.to_checksum_address(
-                        alamat_pengawas_baru.strip()
-                    )
-
-                    calldata_pengawas = (
-                        kontrak.functions.setPengawas(
-                            alamat_valid
-                        )._encode_transaction_data()
-                    )
-
-                    javascript_pengawas = f"""
-                    (async () => {{
-                        const provider =
-                            window.parent.ethereum || window.ethereum;
-
-                        try {{
-                            const accounts = await provider.request({{
-                                method: "eth_requestAccounts"
-                            }});
-
-                            if (
-                                accounts[0].toLowerCase() !==
-                                "{alamat_pengelola}".toLowerCase()
-                            ) {{
-                                return JSON.stringify({{
-                                    error: "Akun MetaMask bukan akun pengelola."
-                                }});
-                            }}
-
-                            const txHash = await provider.request({{
-                                method: "eth_sendTransaction",
-                                params: [{{
-                                    from: accounts[0],
-                                    to: "{kontrak.address}",
-                                    data: "{calldata_pengawas}"
-                                }}]
-                            }});
-
-                            return JSON.stringify({{hash: txHash}});
-
-                        }} catch (error) {{
-                            return JSON.stringify({{
-                                error: error.message
-                            }});
-                        }}
-                    }})()
-                    """
-
-                    st.info("Konfirmasi pendaftaran di MetaMask.")
-
-                    hasil_pengawas = streamlit_js_eval(
-                        js_expressions=javascript_pengawas,
-                        want_output=True,
-                        key="PENDAFTARAN_PENGAWAS_METAMASK"
-                    )
-
-                    if hasil_pengawas and hasil_pengawas != "null":
-                        if isinstance(hasil_pengawas, str):
-                            hasil_data = json.loads(hasil_pengawas)
-                        else:
-                            hasil_data = hasil_pengawas
-
-                        if hasil_data.get("error"):
-                            st.error(hasil_data["error"])
-
-                        elif hasil_data.get("hash"):
-                            receipt = w3.eth.wait_for_transaction_receipt(
-                                hasil_data["hash"]
-                            )
-
-                            if receipt.status == 1:
-                                st.success("Pengawas berhasil didaftarkan!")
-                                st.code(hasil_data["hash"])
-                                st.rerun()
-                            else:
-                                st.error("Transaksi pendaftaran gagal.")
-
-                except Exception as error:
-                    st.error("Gagal mendaftarkan pengawas.")
-                    st.code(str(error))
-
-    seluruh_id = []
-
-    event_donasi = kontrak.events.DonationCreated()
-
-    try:
-        log_donasi = event_donasi.get_logs(
-            from_block=0,
-            to_block="latest"
-        )
-
-        seluruh_id = sorted({
-            int(log["args"]["donationId"])
-            for log in log_donasi
-        })
-
-    except Exception as error:
-        st.warning(
-            "Riwayat event belum dapat dibaca: " + str(error)
-        )
-
-    daftar_donasi = []
-
-    for donation_id in seluruh_id:
-
-        try:
-
-            data = kontrak.functions.getDonation(
-                donation_id
-            ).call()
-
-            daftar_donasi.append({
-                "ID": data[0],
-                "Kampanye": data[1],
-                "Donatur": data[2],
-                "Alamat Donatur": data[3],
-                "Jumlah": int(data[4]),
-                "Tujuan": data[5],
-                "Status": data[6],
-                "Timestamp": int(data[7])
-            })
-
-        except Exception as error:
-            st.warning(
-                f"Donasi ID {donation_id} gagal dibaca: {error}"
-            )
-
-    data_donasi = pd.DataFrame(daftar_donasi)
-    
-    
     # ==========================================
-    with tab_kelola:
-        # PENGELOLAAN DONASI
-        # ==========================================
+    # MENU: PENGELOLAAN DONASI
+    # ==========================================
 
-        st.divider()
+    elif menu_pilihan == M_KELOLA:
+
         st.markdown("## 📝 Pengelolaan Donasi")
         st.caption(
             "Pengelola dapat menentukan tujuan penggunaan dana "
@@ -1010,13 +1211,14 @@ try:
 
         else:
             st.info("Belum ada donasi yang dapat dikelola.")
-        
-        
-        # ==========================================
-        # FORM PENYALURAN DONASI
-        # ==========================================
 
-        st.divider()
+
+    # ==========================================
+    # MENU: FORM PENYALURAN DONASI
+    # ==========================================
+
+    elif menu_pilihan == M_SALURKAN:
+
         st.markdown("## 📦 Penyaluran Donasi")
         st.caption(
             "Catat penyaluran bantuan kepada penerima melalui blockchain."
@@ -1197,14 +1399,14 @@ try:
                 "Belum ada kampanye dengan donasi berstatus "
                 "Dikelola dan saldo yang tersedia."
             )
-        
-        
-        # ==========================================
-    with tab_verifikasi:
-        # FORM VERIFIKASI DONASI
-        # ==========================================
 
-        st.divider()
+
+    # ==========================================
+    # MENU: FORM VERIFIKASI DONASI
+    # ==========================================
+
+    elif menu_pilihan == M_VERIFIKASI:
+
         st.markdown("## 🔍 Verifikasi Donasi")
         st.caption(
             "Pengawas memverifikasi donasi yang telah disalurkan "
@@ -1360,108 +1562,136 @@ try:
             )
 
 
-        # ==========================================
-    with tab_dashboard:
-        # RINGKASAN DASHBOARD
-        # ==========================================
+    # ==========================================
+    # MENU: PENDAFTARAN ALAMAT PENGAWAS
+    # ==========================================
 
-        st.divider()
+    elif menu_pilihan == M_PENGAWAS:
 
-        st.markdown(
-            '<div class="section-heading">📈 Ringkasan Donasi</div>',
-            unsafe_allow_html=True
+        st.markdown("## 🛡️ Pendaftaran Pengawas")
+
+        alamat_pengawas_terdaftar = kontrak.functions.pengawas().call()
+
+        st.write("Alamat pengawas saat ini:")
+        st.code(
+            alamat_pengawas_terdaftar
+            if alamat_pengawas_terdaftar != "0x0000000000000000000000000000000000000000"
+            else "Belum ada pengawas terdaftar"
         )
 
-        st.markdown(
-            '<div class="section-description">'
-            'Ikhtisar catatan donasi yang tersimpan pada blockchain.'
-            '</div>',
-            unsafe_allow_html=True
-        )
-
-        if not data_donasi.empty:
-
-            total_donasi = int(data_donasi["Jumlah"].sum())
-
-            jumlah_kampanye = data_donasi["Kampanye"].nunique()
-
-            jumlah_terverifikasi = int(
-                (data_donasi["Status"] == 3).sum()
-            )
-
-        else:
-
-            total_donasi = 0
-            jumlah_kampanye = 0
-            jumlah_terverifikasi = 0
-
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
-            st.metric(
-                "💰 Total Donasi Tercatat",
-                f"Rp {total_donasi:,}".replace(",", ".")
-            )
-
-        with col2:
-            st.metric(
-                "📢 Jumlah Kampanye",
-                jumlah_kampanye
-            )
-
-        with col3:
-            st.metric(
-                "🔍 Donasi Terverifikasi",
-                jumlah_terverifikasi
-            )
-
-        st.caption(
-            "Catatan: nominal merupakan data yang tersimpan "
-            "dalam smart contract, bukan bukti transfer uang."
-        )
-
-
-        # ==========================================
-    with tab_dashboard:
-            # GRAFIK DONASI
-            # ==========================================
-
-            st.divider()
-
-            st.markdown(
-                '<div class="section-heading">📊 Statistik Donasi</div>',
-                unsafe_allow_html=True
-            )
-
-            st.markdown(
-                '<div class="section-description">'
-                'Visualisasi nominal donasi berdasarkan kampanye.'
-                '</div>',
-                unsafe_allow_html=True
-            )
-
-            if not data_donasi.empty:
-
-                data_grafik = (
-                    data_donasi.groupby("Kampanye")["Jumlah"]
-                    .sum()
-                    .to_frame()
+        with st.container(border=True):
+            with st.form("form_daftar_pengawas"):
+                alamat_pengawas_baru = st.text_input(
+                    "Alamat Wallet Pengawas",
+                    value="0x5eaFb8348d346e70C36154D9b80fc0228273E799"
                 )
 
-                st.bar_chart(data_grafik)
+                submit_pengawas = st.form_submit_button(
+                    "🛡️ Daftarkan Pengawas",
+                    use_container_width=True
+                )
+
+        if submit_pengawas:
+            wallet_pengelola = st.session_state.get("wallet_data")
+
+            if not wallet_pengelola or "account" not in wallet_pengelola:
+                st.error("Hubungkan MetaMask terlebih dahulu.")
+
+            elif wallet_pengelola.get("chainId") != 31337:
+                st.error("Pilih jaringan Hardhat Local.")
+
+            elif wallet_pengelola["account"].lower() != alamat_pengelola.lower():
+                st.error("Gunakan akun MetaMask milik pengelola.")
 
             else:
-                st.info(
-                    "Belum ada donasi yang tercatat di smart contract."
-                )
+                try:
+                    alamat_valid = w3.to_checksum_address(
+                        alamat_pengawas_baru.strip()
+                    )
+
+                    calldata_pengawas = (
+                        kontrak.functions.setPengawas(
+                            alamat_valid
+                        )._encode_transaction_data()
+                    )
+
+                    javascript_pengawas = f"""
+                    (async () => {{
+                        const provider =
+                            window.parent.ethereum || window.ethereum;
+
+                        try {{
+                            const accounts = await provider.request({{
+                                method: "eth_requestAccounts"
+                            }});
+
+                            if (
+                                accounts[0].toLowerCase() !==
+                                "{alamat_pengelola}".toLowerCase()
+                            ) {{
+                                return JSON.stringify({{
+                                    error: "Akun MetaMask bukan akun pengelola."
+                                }});
+                            }}
+
+                            const txHash = await provider.request({{
+                                method: "eth_sendTransaction",
+                                params: [{{
+                                    from: accounts[0],
+                                    to: "{kontrak.address}",
+                                    data: "{calldata_pengawas}"
+                                }}]
+                            }});
+
+                            return JSON.stringify({{hash: txHash}});
+
+                        }} catch (error) {{
+                            return JSON.stringify({{
+                                error: error.message
+                            }});
+                        }}
+                    }})()
+                    """
+
+                    st.info("Konfirmasi pendaftaran di MetaMask.")
+
+                    hasil_pengawas = streamlit_js_eval(
+                        js_expressions=javascript_pengawas,
+                        want_output=True,
+                        key="PENDAFTARAN_PENGAWAS_METAMASK"
+                    )
+
+                    if hasil_pengawas and hasil_pengawas != "null":
+                        if isinstance(hasil_pengawas, str):
+                            hasil_data = json.loads(hasil_pengawas)
+                        else:
+                            hasil_data = hasil_pengawas
+
+                        if hasil_data.get("error"):
+                            st.error(hasil_data["error"])
+
+                        elif hasil_data.get("hash"):
+                            receipt = w3.eth.wait_for_transaction_receipt(
+                                hasil_data["hash"]
+                            )
+
+                            if receipt.status == 1:
+                                st.success("Pengawas berhasil didaftarkan!")
+                                st.code(hasil_data["hash"])
+                                st.rerun()
+                            else:
+                                st.error("Transaksi pendaftaran gagal.")
+
+                except Exception as error:
+                    st.error("Gagal mendaftarkan pengawas.")
+                    st.code(str(error))
 
 
-            # ==========================================
-    with tab_riwayat:
-        # RIWAYAT DONASI
-        # ==========================================
+    # ==========================================
+    # MENU: RIWAYAT DONASI
+    # ==========================================
 
-        st.divider()
+    elif menu_pilihan == M_RIWAYAT:
 
         st.markdown(
             '<div class="section-heading">📋 Riwayat Donasi</div>',
@@ -1477,7 +1707,50 @@ try:
 
         if not data_donasi.empty:
 
-            tampilan = data_donasi.copy()
+            # Salin data asli agar filter tidak mengubah data blockchain.
+            tampilan_asli = data_donasi.copy()
+
+            st.markdown("### 🔎 Cari Data Donasi")
+            st.caption(
+                "Cari berdasarkan ID kampanye, ID donasi, nama donatur, "
+                "alamat wallet, atau tujuan penggunaan."
+            )
+
+            kolom_cari, kolom_status = st.columns([2, 1])
+
+            with kolom_cari:
+                kata_kunci = st.text_input(
+                    "Kata kunci pencarian",
+                    placeholder="Contoh: BANTUAN-001, Donatur, atau ID 1",
+                    key="cari_riwayat_donasi"
+                )
+
+            with kolom_status:
+                pilihan_status = st.selectbox(
+                    "Filter status",
+                    [
+                        "Semua Status",
+                        "Menunggu diproses",
+                        "Dikelola",
+                        "Disalurkan",
+                        "Terverifikasi"
+                    ],
+                    key="filter_status_riwayat"
+                )
+
+            hasil_filter = tampilan_asli.copy()
+
+            # Pencarian lintas kolom: ID, kampanye, donatur, wallet, tujuan.
+            if kata_kunci.strip():
+                kata = kata_kunci.strip().lower()
+                kolom_teks = (
+                    hasil_filter["ID"].astype(str).str.lower().str.contains(kata, na=False)
+                    | hasil_filter["Kampanye"].astype(str).str.lower().str.contains(kata, na=False)
+                    | hasil_filter["Donatur"].astype(str).str.lower().str.contains(kata, na=False)
+                    | hasil_filter["Alamat Donatur"].astype(str).str.lower().str.contains(kata, na=False)
+                    | hasil_filter["Tujuan"].astype(str).str.lower().str.contains(kata, na=False)
+                )
+                hasil_filter = hasil_filter[kolom_teks]
 
             status_map = {
                 0: "Menunggu diproses",
@@ -1486,106 +1759,59 @@ try:
                 3: "Terverifikasi"
             }
 
-            tampilan["Status"] = tampilan["Status"].map(
-                status_map
-            ).fillna("Tidak diketahui")
+            if pilihan_status != "Semua Status":
+                kode_status = {
+                    nama: kode for kode, nama in status_map.items()
+                }[pilihan_status]
+                hasil_filter = hasil_filter[
+                    hasil_filter["Status"] == kode_status
+                ]
 
-            tampilan["Jumlah"] = tampilan["Jumlah"].apply(
-                lambda jumlah: (
-                    "Rp " + f"{jumlah:,}".replace(",", ".")
+            st.caption(
+                f"Menampilkan {len(hasil_filter)} dari "
+                f"{len(tampilan_asli)} catatan donasi."
+            )
+
+            if not hasil_filter.empty:
+                tampilan = hasil_filter.copy()
+
+                tampilan["Status"] = tampilan["Status"].map(
+                    status_map
+                ).fillna("Tidak diketahui")
+
+                tampilan["Jumlah"] = tampilan["Jumlah"].apply(
+                    lambda jumlah: (
+                        "Rp " + f"{jumlah:,}".replace(",", ".")
+                    )
                 )
-            )
 
-            tampilan["Waktu"] = tampilan["Timestamp"].apply(
-                lambda ts: datetime.fromtimestamp(ts).strftime(
-                    "%d-%m-%Y %H:%M:%S"
-                ) if ts > 0 else "-"
-            )
+                tampilan["Waktu"] = tampilan["Timestamp"].apply(
+                    lambda ts: datetime.fromtimestamp(ts).strftime(
+                        "%d-%m-%Y %H:%M:%S"
+                    ) if ts > 0 else "-"
+                )
 
-            st.dataframe(
-                tampilan[
-                    [
-                        "ID",
-                        "Kampanye",
-                        "Donatur",
-                        "Alamat Donatur",
-                        "Jumlah",
-                        "Tujuan",
-                        "Status",
-                        "Waktu"
-                    ]
-                ],
-                use_container_width=True,
-                hide_index=True
-            )
-            
-            
-            st.divider()
-            st.markdown("### 🔎 Detail Data Donasi")
-
-            daftar_id = data_donasi["ID"].astype(int).tolist()
-
-            id_terpilih = st.selectbox(
-                "Pilih ID Donasi untuk melihat detail",
-                options=daftar_id,
-                key="detail_donasi_id"
-            )
-
-            if id_terpilih is not None:
-
-                detail = kontrak.functions.getDonation(
-                    int(id_terpilih)
-                ).call()
-
-                status_detail = {
-                    0: "Menunggu diproses",
-                    1: "Dikelola",
-                    2: "Disalurkan",
-                    3: "Terverifikasi"
-                }
-
-                st.markdown("#### 📋 Informasi Donasi")
-
-                col1, col2 = st.columns(2)
-
-                with col1:
-                    st.write("**ID Donasi**")
-                    st.info(str(detail[0]))
-
-                    st.write("**ID Kampanye**")
-                    st.info(detail[1])
-
-                    st.write("**Nama Donatur**")
-                    st.info(detail[2])
-
-                    st.write("**Alamat Wallet Donatur**")
-                    st.code(detail[3])
-
-                with col2:
-                    st.write("**Nominal Donasi**")
-                    st.info(
-                        "Rp " + f"{int(detail[4]):,}".replace(",", ".")
-                    )
-
-                    st.write("**Tujuan Penggunaan**")
-                    st.info(detail[5] if detail[5] else "Belum ditentukan")
-
-                    st.write("**Status Donasi**")
-                    st.success(
-                        status_detail.get(
-                            int(detail[6]),
-                            "Tidak diketahui"
-                        )
-                    )
-
-                    st.write("**Waktu Pencatatan**")
-                    st.info(
-                        datetime.fromtimestamp(
-                            int(detail[7])
-                        ).strftime("%d-%m-%Y %H:%M:%S")
-                        if int(detail[7]) > 0 else "-"
-                    )
-
+                st.dataframe(
+                    tampilan[
+                        [
+                            "ID",
+                            "Kampanye",
+                            "Donatur",
+                            "Alamat Donatur",
+                            "Jumlah",
+                            "Tujuan",
+                            "Status",
+                            "Waktu"
+                        ]
+                    ],
+                    use_container_width=True,
+                    hide_index=True
+                )
+            else:
+                st.warning(
+                    "Data donasi tidak ditemukan. Coba kata kunci "
+                    "atau filter status yang berbeda."
+                )
 
         else:
 
@@ -1596,12 +1822,11 @@ try:
             )
 
 
-        # ==========================================
-    with tab_blockchain:
-        # INFORMASI BLOCKCHAIN
-        # ==========================================
+    # ==========================================
+    # MENU: INFORMASI BLOCKCHAIN
+    # ==========================================
 
-        st.divider()
+    elif menu_pilihan == M_INFO:
 
         st.markdown(
             '<div class="section-heading">🔗 Informasi Blockchain</div>',
