@@ -249,6 +249,19 @@ hr {
 .footer b {
     color: #163A5F;
 }
+
+/* NAVIGASI DAN TAMPILAN MODERN */
+.welcome-line { background: linear-gradient(120deg,#103f35,#168568); padding: 22px 26px; border-radius: 16px; margin: 8px 0 22px; color: #fff; }
+.welcome-line span { color:#bce8d3; font-size:11px; font-weight:800; letter-spacing:2px; }
+.welcome-line h2 { color:#fff !important; margin:8px 0 4px; font-size:25px; }
+.welcome-line p { color:#e2f5ec !important; margin:0; }
+.stTabs [data-baseweb="tab-list"] { gap:7px; background:#e5edf2; padding:8px; border-radius:14px; }
+.stTabs [data-baseweb="tab"] { border-radius:10px; padding:10px 15px; background:#f8fafc; color:#29445b; font-weight:700; }
+.stTabs [aria-selected="true"] { background:#16785e !important; color:white !important; }
+.stTabs [data-baseweb="tab-highlight"] { background:transparent; }
+.stTabs [data-baseweb="tab-border"] { background:transparent; }
+[data-testid="stVerticalBlockBorderWrapper"] { border-radius:15px; border-color:#d8e3e8; }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -301,165 +314,171 @@ st.html("""
 """)
 
 
+# ==========================================
+# NAVIGASI HALAMAN
+# ==========================================
+st.markdown("""<div class="welcome-line"><span>PLATFORM DONASI DIGITAL</span><h2>Selamat datang di AmalTransparan 👋</h2><p>Pilih menu untuk mengelola dan memantau donasi berbasis blockchain.</p></div>""", unsafe_allow_html=True)
+
+tab_wallet, tab_donasi, tab_kelola, tab_verifikasi, tab_dashboard, tab_riwayat, tab_blockchain = st.tabs([
+    "🦊 Wallet", "💚 Donasi", "🛠️ Pengelolaan", "🔍 Verifikasi",
+    "📊 Dashboard", "📋 Riwayat", "⛓️ Blockchain"
+])
+
 
 # ==========================================
-# INTEGRASI METAMASK
-# ==========================================
+with tab_wallet:
+    # INTEGRASI METAMASK
+    # ==========================================
 
-st.markdown(
-    '<div class="section-heading">🦊 Hubungkan MetaMask</div>',
-    unsafe_allow_html=True
-)
+    st.markdown(
+        '<div class="section-heading">🦊 Hubungkan MetaMask</div>',
+        unsafe_allow_html=True
+    )
 
-st.markdown(
-    '<div class="section-description">'
-    'Hubungkan wallet untuk melihat alamat akun dan saldo ETH.'
-    '</div>',
-    unsafe_allow_html=True
-)
+    st.markdown(
+        '<div class="section-description">'
+        'Hubungkan wallet untuk melihat alamat akun dan saldo ETH.'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
-if "wallet_request_id" not in st.session_state:
-    st.session_state.wallet_request_id = 0
+    if "wallet_request_id" not in st.session_state:
+        st.session_state.wallet_request_id = 0
 
-if "wallet_data" not in st.session_state:
-    st.session_state.wallet_data = None
+    if "wallet_data" not in st.session_state:
+        st.session_state.wallet_data = None
 
-if st.button("🦊 Hubungkan MetaMask", type="primary"):
-    st.session_state.wallet_request_id += 1
+    if st.button("🦊 Hubungkan MetaMask", type="primary"):
+        st.session_state.wallet_request_id += 1
 
-if st.session_state.wallet_request_id > 0:
+    if st.session_state.wallet_request_id > 0:
 
-    request_id = st.session_state.wallet_request_id
+        request_id = st.session_state.wallet_request_id
 
-    javascript = f"""
-    (async () => {{
-        const provider =
-            window.parent.ethereum || window.ethereum;
+        javascript = f"""
+        (async () => {{
+            const provider =
+                window.parent.ethereum || window.ethereum;
 
-        if (!provider) {{
-            return JSON.stringify({{
-                error: "MetaMask tidak ditemukan. Buka aplikasi melalui Chrome."
-            }});
-        }}
-
-        try {{
-            const accounts = await provider.request({{
-                method: "eth_requestAccounts"
-            }});
-
-            if (!accounts || accounts.length === 0) {{
+            if (!provider) {{
                 return JSON.stringify({{
-                    error: "Belum ada akun MetaMask yang terhubung."
+                    error: "MetaMask tidak ditemukan. Buka aplikasi melalui Chrome."
                 }});
             }}
 
-            const account = accounts[0];
+            try {{
+                const accounts = await provider.request({{
+                    method: "eth_requestAccounts"
+                }});
 
-            const chainId = await provider.request({{
-                method: "eth_chainId"
-            }});
+                if (!accounts || accounts.length === 0) {{
+                    return JSON.stringify({{
+                        error: "Belum ada akun MetaMask yang terhubung."
+                    }});
+                }}
 
-            const balanceHex = await provider.request({{
-                method: "eth_getBalance",
-                params: [account, "latest"]
-            }});
+                const account = accounts[0];
 
-            const balanceWei = BigInt(balanceHex);
-            const balanceEth =
-                Number(balanceWei) / 1000000000000000000;
+                const chainId = await provider.request({{
+                    method: "eth_chainId"
+                }});
 
-            return JSON.stringify({{
-                account: account,
-                chainId: parseInt(chainId, 16),
-                balanceEth: balanceEth.toFixed(6)
-            }});
+                const balanceHex = await provider.request({{
+                    method: "eth_getBalance",
+                    params: [account, "latest"]
+                }});
 
-        }} catch (error) {{
-            return JSON.stringify({{
-                error: error.message
-            }});
-        }}
-    }})()
-    // request_id: {request_id}
-    """
+                const balanceWei = BigInt(balanceHex);
+                const balanceEth =
+                    Number(balanceWei) / 1000000000000000000;
 
-else:
-    javascript = "null"
+                return JSON.stringify({{
+                    account: account,
+                    chainId: parseInt(chainId, 16),
+                    balanceEth: balanceEth.toFixed(6)
+                }});
 
-hasil_wallet = streamlit_js_eval(
-    js_expressions=javascript,
-    want_output=True,
-    key="AMALTRANSPARAN_METAMASK"
-)
-
-if hasil_wallet and hasil_wallet != "null":
-
-    try:
-        if isinstance(hasil_wallet, str):
-            data_wallet = json.loads(hasil_wallet)
-        else:
-            data_wallet = hasil_wallet
-
-        if isinstance(data_wallet, dict):
-            st.session_state.wallet_data = data_wallet
-
-    except Exception:
-        st.warning("Hasil koneksi MetaMask belum dapat dibaca.")
-
-wallet = st.session_state.wallet_data
-
-if wallet:
-
-    if "error" in wallet:
-
-        st.error("Koneksi MetaMask gagal.")
-        st.warning(wallet["error"])
+            }} catch (error) {{
+                return JSON.stringify({{
+                    error: error.message
+                }});
+            }}
+        }})()
+        // request_id: {request_id}
+        """
 
     else:
+        javascript = "null"
 
-        st.success("MetaMask berhasil terhubung!")
-
-        alamat_wallet = wallet["account"]
-        chain_id_wallet = wallet["chainId"]
-        saldo_wallet = wallet["balanceEth"]
-        
-        st.write("DEBUG WALLET")
-        st.write("Alamat:", alamat_wallet)
-        st.write("Chain ID:", chain_id_wallet)
-        st.write("Saldo:", saldo_wallet, "ETH")
-
-        col_wallet1, col_wallet2 = st.columns(2)
-
-        with col_wallet1:
-            st.metric(
-                "💳 Saldo ETH Wallet",
-                f"{saldo_wallet} ETH"
-            )
-
-        with col_wallet2:
-            st.metric(
-                "🌐 Chain ID Wallet",
-                chain_id_wallet
-            )
-
-        st.write("**Alamat Wallet:**")
-        st.code(alamat_wallet)
-
-        if chain_id_wallet == 31337:
-            st.success("Jaringan sesuai: Hardhat Local.")
-        else:
-            st.warning(
-                "Pilih jaringan Hardhat Local pada MetaMask."
-            )
-
-else:
-    st.info(
-        "Belum ada wallet yang terhubung. "
-        "Klik tombol Hubungkan MetaMask untuk memulai."
+    hasil_wallet = streamlit_js_eval(
+        js_expressions=javascript,
+        want_output=True,
+        key="AMALTRANSPARAN_METAMASK"
     )
 
+    if hasil_wallet and hasil_wallet != "null":
 
-st.divider()
+        try:
+            if isinstance(hasil_wallet, str):
+                data_wallet = json.loads(hasil_wallet)
+            else:
+                data_wallet = hasil_wallet
+
+            if isinstance(data_wallet, dict):
+                st.session_state.wallet_data = data_wallet
+
+        except Exception:
+            st.warning("Hasil koneksi MetaMask belum dapat dibaca.")
+
+    wallet = st.session_state.wallet_data
+
+    if wallet:
+
+        if "error" in wallet:
+
+            st.error("Koneksi MetaMask gagal.")
+            st.warning(wallet["error"])
+
+        else:
+
+            st.success("MetaMask berhasil terhubung!")
+
+            alamat_wallet = wallet["account"]
+            chain_id_wallet = wallet["chainId"]
+            saldo_wallet = wallet["balanceEth"]
+
+            col_wallet1, col_wallet2 = st.columns(2)
+
+            with col_wallet1:
+                st.metric(
+                    "💳 Saldo ETH Wallet",
+                    f"{saldo_wallet} ETH"
+                )
+
+            with col_wallet2:
+                st.metric(
+                    "🌐 Chain ID Wallet",
+                    chain_id_wallet
+                )
+
+            st.write("**Alamat Wallet:**")
+            st.code(alamat_wallet)
+
+            if chain_id_wallet == 31337:
+                st.success("Jaringan sesuai: Hardhat Local.")
+            else:
+                st.warning(
+                    "Pilih jaringan Hardhat Local pada MetaMask."
+                )
+
+    else:
+        st.info(
+            "Belum ada wallet yang terhubung. "
+            "Klik tombol Hubungkan MetaMask untuk memulai."
+        )
+
+
+    st.divider()
 
 # ==========================================
 # KONEKSI SMART CONTRACT
@@ -476,309 +495,311 @@ try:
     
     
     # ==========================================
-    # FORM DONASI - INTEGRASI SMART CONTRACT
-    # ==========================================
+    with tab_donasi:
+        # FORM DONASI - INTEGRASI SMART CONTRACT
+        # ==========================================
 
-    st.divider()
+        st.divider()
 
-    st.markdown("## 💚 Form Donasi")
-    st.caption(
-        "Catat donasi dan buat NFT sebagai bukti pencatatan "
-        "donasi pada blockchain."
-    )
+        st.markdown("## 💚 Form Donasi")
+        st.caption(
+            "Catat donasi dan buat NFT sebagai bukti pencatatan "
+            "donasi pada blockchain."
+        )
 
-    with st.container(border=True):
-        with st.form("form_donasi_blockchain"):
+        with st.container(border=True):
+            with st.form("form_donasi_blockchain"):
 
-            campaign_id = st.text_input(
-                "ID Kampanye",
-                placeholder="Contoh: BANTUAN-001"
-            )
+                campaign_id = st.text_input(
+                    "ID Kampanye",
+                    placeholder="Contoh: BANTUAN-001"
+                )
 
-            nama_donatur = st.text_input(
-                "Nama Donatur",
-                placeholder="Masukkan nama donatur"
-            )
+                nama_donatur = st.text_input(
+                    "Nama Donatur",
+                    placeholder="Masukkan nama donatur"
+                )
 
-            nominal_donasi = st.number_input(
-                "Nominal Donasi (Rp)",
-                min_value=1000,
-                step=1000,
-                value=10000
-            )
+                nominal_donasi = st.number_input(
+                    "Nominal Donasi (Rp)",
+                    min_value=1000,
+                    step=1000,
+                    value=10000
+                )
 
-            metadata_uri = st.text_input(
-                "Metadata URI (Opsional)",
-                placeholder="https://..."
-            )
+                metadata_uri = st.text_input(
+                    "Metadata URI (Opsional)",
+                    placeholder="https://..."
+                )
 
-            submit_donasi = st.form_submit_button(
-                "💚 Catat Donasi ke Blockchain",
-                use_container_width=True
-            )
+                submit_donasi = st.form_submit_button(
+                    "💚 Catat Donasi ke Blockchain",
+                    use_container_width=True
+                )
 
-    st.info(
-        "Nominal donasi dicatat sebagai data pada smart contract. "
-        "Kode kontrak saat ini belum melakukan transfer ETH."
-    )
+        st.info(
+            "Nominal donasi dicatat sebagai data pada smart contract. "
+            "Kode kontrak saat ini belum melakukan transfer ETH."
+        )
 
     
-    if submit_donasi:
+        if submit_donasi:
 
-        wallet = st.session_state.get("wallet_data")
+            wallet = st.session_state.get("wallet_data")
 
-        if not campaign_id.strip():
-            st.error("ID kampanye wajib diisi.")
+            if not campaign_id.strip():
+                st.error("ID kampanye wajib diisi.")
 
-        elif not nama_donatur.strip():
-            st.error("Nama donatur wajib diisi.")
+            elif not nama_donatur.strip():
+                st.error("Nama donatur wajib diisi.")
 
-        elif not wallet or "account" not in wallet:
-            st.error("Hubungkan MetaMask terlebih dahulu.")
+            elif not wallet or "account" not in wallet:
+                st.error("Hubungkan MetaMask terlebih dahulu.")
 
-        elif wallet.get("chainId") != 31337:
-            st.error("Pilih jaringan Hardhat Local di MetaMask.")
+            elif wallet.get("chainId") != 31337:
+                st.error("Pilih jaringan Hardhat Local di MetaMask.")
 
-        else:
-            try:
-                alamat_wallet = w3.to_checksum_address(
-                    wallet["account"]
-                )
+            else:
+                try:
+                    alamat_wallet = w3.to_checksum_address(
+                        wallet["account"]
+                    )
 
-                # Siapkan data transaksi dari smart contract
-                calldata = kontrak.functions.createDonation(
-                    campaign_id.strip(),
-                    nama_donatur.strip(),
-                    int(nominal_donasi),
-                    metadata_uri.strip()
-                )._encode_transaction_data()
-
-                # Kirim transaksi melalui MetaMask
-                javascript_transaksi = f"""
-                (async () => {{
-                    const provider =
-                        window.parent.ethereum || window.ethereum;
-
-                    if (!provider) {{
-                        return JSON.stringify({{
-                            error: "MetaMask tidak ditemukan."
-                        }});
-                    }}
-
-                    try {{
-                        const accounts = await provider.request({{
-                            method: "eth_requestAccounts"
-                        }});
-
-                        if (
-                            accounts[0].toLowerCase() !==
-                            "{alamat_wallet}".toLowerCase()
-                        ) {{
-                            return JSON.stringify({{
-                                error: "Akun MetaMask berubah. Hubungkan ulang wallet."
-                            }});
-                        }}
-
-                        const txHash = await provider.request({{
-                            method: "eth_sendTransaction",
-                            params: [{{
-                                from: "{alamat_wallet}",
-                                to: "{kontrak.address}",
-                                data: "{calldata}"
-                            }}]
-                        }});
-
-                        return JSON.stringify({{
-                            txHash: txHash
-                        }});
-
-                    }} catch (error) {{
-                        return JSON.stringify({{
-                            error: error.message
-                        }});
-                    }}
-                }})()
-                """
-
-                st.info(
-                    "Silakan konfirmasi transaksi pada MetaMask."
-                )
-
-                hasil_transaksi = streamlit_js_eval(
-                    js_expressions=javascript_transaksi,
-                    want_output=True,
-                    key="DONASI_METAMASK_TX"
-                )
-
-                if hasil_transaksi and hasil_transaksi != "null":
-
-                    if isinstance(hasil_transaksi, str):
-                        hasil = json.loads(hasil_transaksi)
-                    else:
-                        hasil = hasil_transaksi
-
-                    if "error" in hasil:
-                        st.error(hasil["error"])
-
-                    elif "txHash" in hasil:
-                        with st.spinner(
-                            "Menunggu transaksi dikonfirmasi blockchain..."
-                        ):
-                            receipt = w3.eth.wait_for_transaction_receipt(
-                                hasil["txHash"]
-                            )
-
-                        if receipt.status == 1:
-                            st.success(
-                                "Donasi berhasil dicatat ke blockchain!"
-                            )
-                            st.write("**Transaction Hash:**")
-                            st.code(receipt.transactionHash.hex())
-                            st.write(
-                                "**Block Number:**",
-                                receipt.blockNumber
-                            )
-                            st.write("**Alamat Donatur:**")
-                            st.code(alamat_wallet)
-                            st.info(
-                                "NFT donasi berhasil dibuat oleh smart contract."
-                            )
-                        else:
-                            st.error("Transaksi gagal.")
-
-            except Exception as error:
-                st.error("Transaksi donasi gagal.")
-                st.code(str(error))
-
-
-
-    st.success("Blockchain Hardhat berhasil terhubung!")
-
-    alamat_pengelola = kontrak.functions.pengelola().call()
-    
-    
-    # ==========================================
-    # PENDAFTARAN ALAMAT PENGAWAS
-    # ==========================================
-
-    st.divider()
-    st.markdown("## 🛡️ Pendaftaran Pengawas")
-
-    alamat_pengawas_terdaftar = kontrak.functions.pengawas().call()
-
-    st.write("Alamat pengawas saat ini:")
-    st.code(
-        alamat_pengawas_terdaftar
-        if alamat_pengawas_terdaftar != "0x0000000000000000000000000000000000000000"
-        else "Belum ada pengawas terdaftar"
-    )
-
-    with st.container(border=True):
-        with st.form("form_daftar_pengawas"):
-            alamat_pengawas_baru = st.text_input(
-                "Alamat Wallet Pengawas",
-                value="0x5eaFb8348d346e70C36154D9b80fc0228273E799"
-            )
-
-            submit_pengawas = st.form_submit_button(
-                "🛡️ Daftarkan Pengawas",
-                use_container_width=True
-            )
-
-    if submit_pengawas:
-        wallet_pengelola = st.session_state.get("wallet_data")
-
-        if not wallet_pengelola or "account" not in wallet_pengelola:
-            st.error("Hubungkan MetaMask terlebih dahulu.")
-
-        elif wallet_pengelola.get("chainId") != 31337:
-            st.error("Pilih jaringan Hardhat Local.")
-
-        elif wallet_pengelola["account"].lower() != alamat_pengelola.lower():
-            st.error("Gunakan akun MetaMask milik pengelola.")
-
-        else:
-            try:
-                alamat_valid = w3.to_checksum_address(
-                    alamat_pengawas_baru.strip()
-                )
-
-                calldata_pengawas = (
-                    kontrak.functions.setPengawas(
-                        alamat_valid
+                    # Siapkan data transaksi dari smart contract
+                    calldata = kontrak.functions.createDonation(
+                        campaign_id.strip(),
+                        nama_donatur.strip(),
+                        int(nominal_donasi),
+                        metadata_uri.strip()
                     )._encode_transaction_data()
-                )
 
-                javascript_pengawas = f"""
-                (async () => {{
-                    const provider =
-                        window.parent.ethereum || window.ethereum;
+                    # Kirim transaksi melalui MetaMask
+                    javascript_transaksi = f"""
+                    (async () => {{
+                        const provider =
+                            window.parent.ethereum || window.ethereum;
 
-                    try {{
-                        const accounts = await provider.request({{
-                            method: "eth_requestAccounts"
-                        }});
-
-                        if (
-                            accounts[0].toLowerCase() !==
-                            "{alamat_pengelola}".toLowerCase()
-                        ) {{
+                        if (!provider) {{
                             return JSON.stringify({{
-                                error: "Akun MetaMask bukan akun pengelola."
+                                error: "MetaMask tidak ditemukan."
                             }});
                         }}
 
-                        const txHash = await provider.request({{
-                            method: "eth_sendTransaction",
-                            params: [{{
-                                from: accounts[0],
-                                to: "{kontrak.address}",
-                                data: "{calldata_pengawas}"
-                            }}]
-                        }});
+                        try {{
+                            const accounts = await provider.request({{
+                                method: "eth_requestAccounts"
+                            }});
 
-                        return JSON.stringify({{hash: txHash}});
+                            if (
+                                accounts[0].toLowerCase() !==
+                                "{alamat_wallet}".toLowerCase()
+                            ) {{
+                                return JSON.stringify({{
+                                    error: "Akun MetaMask berubah. Hubungkan ulang wallet."
+                                }});
+                            }}
 
-                    }} catch (error) {{
-                        return JSON.stringify({{
-                            error: error.message
-                        }});
-                    }}
-                }})()
-                """
+                            const txHash = await provider.request({{
+                                method: "eth_sendTransaction",
+                                params: [{{
+                                    from: "{alamat_wallet}",
+                                    to: "{kontrak.address}",
+                                    data: "{calldata}"
+                                }}]
+                            }});
 
-                st.info("Konfirmasi pendaftaran di MetaMask.")
+                            return JSON.stringify({{
+                                txHash: txHash
+                            }});
 
-                hasil_pengawas = streamlit_js_eval(
-                    js_expressions=javascript_pengawas,
-                    want_output=True,
-                    key="PENDAFTARAN_PENGAWAS_METAMASK"
+                        }} catch (error) {{
+                            return JSON.stringify({{
+                                error: error.message
+                            }});
+                        }}
+                    }})()
+                    """
+
+                    st.info(
+                        "Silakan konfirmasi transaksi pada MetaMask."
+                    )
+
+                    hasil_transaksi = streamlit_js_eval(
+                        js_expressions=javascript_transaksi,
+                        want_output=True,
+                        key="DONASI_METAMASK_TX"
+                    )
+
+                    if hasil_transaksi and hasil_transaksi != "null":
+
+                        if isinstance(hasil_transaksi, str):
+                            hasil = json.loads(hasil_transaksi)
+                        else:
+                            hasil = hasil_transaksi
+
+                        if "error" in hasil:
+                            st.error(hasil["error"])
+
+                        elif "txHash" in hasil:
+                            with st.spinner(
+                                "Menunggu transaksi dikonfirmasi blockchain..."
+                            ):
+                                receipt = w3.eth.wait_for_transaction_receipt(
+                                    hasil["txHash"]
+                                )
+
+                            if receipt.status == 1:
+                                st.success(
+                                    "Donasi berhasil dicatat ke blockchain!"
+                                )
+                                st.write("**Transaction Hash:**")
+                                st.code(receipt.transactionHash.hex())
+                                st.write(
+                                    "**Block Number:**",
+                                    receipt.blockNumber
+                                )
+                                st.write("**Alamat Donatur:**")
+                                st.code(alamat_wallet)
+                                st.info(
+                                    "NFT donasi berhasil dibuat oleh smart contract."
+                                )
+                            else:
+                                st.error("Transaksi gagal.")
+
+                except Exception as error:
+                    st.error("Transaksi donasi gagal.")
+                    st.code(str(error))
+
+
+
+        st.success("Blockchain Hardhat berhasil terhubung!")
+
+        alamat_pengelola = kontrak.functions.pengelola().call()
+    
+    
+        # ==========================================
+    with tab_kelola:
+        # PENDAFTARAN ALAMAT PENGAWAS
+        # ==========================================
+
+        st.divider()
+        st.markdown("## 🛡️ Pendaftaran Pengawas")
+
+        alamat_pengawas_terdaftar = kontrak.functions.pengawas().call()
+
+        st.write("Alamat pengawas saat ini:")
+        st.code(
+            alamat_pengawas_terdaftar
+            if alamat_pengawas_terdaftar != "0x0000000000000000000000000000000000000000"
+            else "Belum ada pengawas terdaftar"
+        )
+
+        with st.container(border=True):
+            with st.form("form_daftar_pengawas"):
+                alamat_pengawas_baru = st.text_input(
+                    "Alamat Wallet Pengawas",
+                    value="0x5eaFb8348d346e70C36154D9b80fc0228273E799"
                 )
 
-                if hasil_pengawas and hasil_pengawas != "null":
-                    if isinstance(hasil_pengawas, str):
-                        hasil_data = json.loads(hasil_pengawas)
-                    else:
-                        hasil_data = hasil_pengawas
+                submit_pengawas = st.form_submit_button(
+                    "🛡️ Daftarkan Pengawas",
+                    use_container_width=True
+                )
 
-                    if hasil_data.get("error"):
-                        st.error(hasil_data["error"])
+        if submit_pengawas:
+            wallet_pengelola = st.session_state.get("wallet_data")
 
-                    elif hasil_data.get("hash"):
-                        receipt = w3.eth.wait_for_transaction_receipt(
-                            hasil_data["hash"]
-                        )
+            if not wallet_pengelola or "account" not in wallet_pengelola:
+                st.error("Hubungkan MetaMask terlebih dahulu.")
 
-                        if receipt.status == 1:
-                            st.success("Pengawas berhasil didaftarkan!")
-                            st.code(hasil_data["hash"])
-                            st.rerun()
+            elif wallet_pengelola.get("chainId") != 31337:
+                st.error("Pilih jaringan Hardhat Local.")
+
+            elif wallet_pengelola["account"].lower() != alamat_pengelola.lower():
+                st.error("Gunakan akun MetaMask milik pengelola.")
+
+            else:
+                try:
+                    alamat_valid = w3.to_checksum_address(
+                        alamat_pengawas_baru.strip()
+                    )
+
+                    calldata_pengawas = (
+                        kontrak.functions.setPengawas(
+                            alamat_valid
+                        )._encode_transaction_data()
+                    )
+
+                    javascript_pengawas = f"""
+                    (async () => {{
+                        const provider =
+                            window.parent.ethereum || window.ethereum;
+
+                        try {{
+                            const accounts = await provider.request({{
+                                method: "eth_requestAccounts"
+                            }});
+
+                            if (
+                                accounts[0].toLowerCase() !==
+                                "{alamat_pengelola}".toLowerCase()
+                            ) {{
+                                return JSON.stringify({{
+                                    error: "Akun MetaMask bukan akun pengelola."
+                                }});
+                            }}
+
+                            const txHash = await provider.request({{
+                                method: "eth_sendTransaction",
+                                params: [{{
+                                    from: accounts[0],
+                                    to: "{kontrak.address}",
+                                    data: "{calldata_pengawas}"
+                                }}]
+                            }});
+
+                            return JSON.stringify({{hash: txHash}});
+
+                        }} catch (error) {{
+                            return JSON.stringify({{
+                                error: error.message
+                            }});
+                        }}
+                    }})()
+                    """
+
+                    st.info("Konfirmasi pendaftaran di MetaMask.")
+
+                    hasil_pengawas = streamlit_js_eval(
+                        js_expressions=javascript_pengawas,
+                        want_output=True,
+                        key="PENDAFTARAN_PENGAWAS_METAMASK"
+                    )
+
+                    if hasil_pengawas and hasil_pengawas != "null":
+                        if isinstance(hasil_pengawas, str):
+                            hasil_data = json.loads(hasil_pengawas)
                         else:
-                            st.error("Transaksi pendaftaran gagal.")
+                            hasil_data = hasil_pengawas
 
-            except Exception as error:
-                st.error("Gagal mendaftarkan pengawas.")
-                st.code(str(error))
+                        if hasil_data.get("error"):
+                            st.error(hasil_data["error"])
+
+                        elif hasil_data.get("hash"):
+                            receipt = w3.eth.wait_for_transaction_receipt(
+                                hasil_data["hash"]
+                            )
+
+                            if receipt.status == 1:
+                                st.success("Pengawas berhasil didaftarkan!")
+                                st.code(hasil_data["hash"])
+                                st.rerun()
+                            else:
+                                st.error("Transaksi pendaftaran gagal.")
+
+                except Exception as error:
+                    st.error("Gagal mendaftarkan pengawas.")
+                    st.code(str(error))
 
     seluruh_id = []
 
@@ -830,718 +851,792 @@ try:
     
     
     # ==========================================
-    # PENGELOLAAN DONASI
-    # ==========================================
+    with tab_kelola:
+        # PENGELOLAAN DONASI
+        # ==========================================
 
-    st.divider()
-    st.markdown("## 📝 Pengelolaan Donasi")
-    st.caption(
-        "Pengelola dapat menentukan tujuan penggunaan dana "
-        "dan mengubah status donasi menjadi dikelola."
-    )
+        st.divider()
+        st.markdown("## 📝 Pengelolaan Donasi")
+        st.caption(
+            "Pengelola dapat menentukan tujuan penggunaan dana "
+            "dan mengubah status donasi menjadi dikelola."
+        )
 
-    if not data_donasi.empty:
+        if not data_donasi.empty:
 
-        with st.container(border=True):
-            with st.form("form_pengelolaan_donasi"):
+            with st.container(border=True):
+                with st.form("form_pengelolaan_donasi"):
 
-                pilihan_donasi = st.selectbox(
-                    "Pilih ID Donasi",
-                    options=data_donasi["ID"].astype(int).tolist()
-                )
-
-                tujuan_penggunaan = st.text_area(
-                    "Tujuan Penggunaan Dana",
-                    placeholder="Contoh: Pembelian sembako untuk korban bencana"
-                )
-
-                submit_kelola = st.form_submit_button(
-                    "📝 Kelola Donasi melalui MetaMask",
-                    use_container_width=True
-                )
-
-        if submit_kelola:
-
-            wallet_kelola = st.session_state.get("wallet_data")
-
-            if not tujuan_penggunaan.strip():
-                st.error("Tujuan penggunaan dana wajib diisi.")
-
-            elif not wallet_kelola or "account" not in wallet_kelola:
-                st.error("Hubungkan MetaMask terlebih dahulu.")
-
-            elif wallet_kelola.get("chainId") != 31337:
-                st.error("Pilih jaringan Hardhat Local.")
-
-            elif wallet_kelola["account"].lower() != alamat_pengelola.lower():
-                st.error(
-                    "Akun MetaMask bukan akun pengelola. "
-                    "Gunakan akun yang melakukan deploy smart contract."
-                )
-
-            else:
-                try:
-                    alamat_wallet_kelola = w3.to_checksum_address(
-                        wallet_kelola["account"]
+                    pilihan_donasi = st.selectbox(
+                        "Pilih ID Donasi",
+                        options=data_donasi["ID"].astype(int).tolist()
                     )
 
-                    calldata_kelola = (
-                        kontrak.functions.manageDonation(
-                            int(pilihan_donasi),
-                            tujuan_penggunaan.strip()
-                        )._encode_transaction_data()
+                    tujuan_penggunaan = st.text_area(
+                        "Tujuan Penggunaan Dana",
+                        placeholder="Contoh: Pembelian sembako untuk korban bencana"
                     )
 
-                    javascript_kelola = f"""
-                    (async () => {{
-                        const provider =
-                            window.parent.ethereum || window.ethereum;
+                    submit_kelola = st.form_submit_button(
+                        "📝 Kelola Donasi melalui MetaMask",
+                        use_container_width=True
+                    )
 
-                        if (!provider) {{
-                            return JSON.stringify({{
-                                error: "MetaMask tidak ditemukan."
-                            }});
-                        }}
+            if submit_kelola:
 
-                        try {{
-                            const accounts = await provider.request({{
-                                method: "eth_requestAccounts"
-                            }});
+                wallet_kelola = st.session_state.get("wallet_data")
 
-                            if (
-                                accounts[0].toLowerCase() !==
-                                "{alamat_wallet_kelola}".toLowerCase()
-                            ) {{
+                if not tujuan_penggunaan.strip():
+                    st.error("Tujuan penggunaan dana wajib diisi.")
+
+                elif not wallet_kelola or "account" not in wallet_kelola:
+                    st.error("Hubungkan MetaMask terlebih dahulu.")
+
+                elif wallet_kelola.get("chainId") != 31337:
+                    st.error("Pilih jaringan Hardhat Local.")
+
+                elif wallet_kelola["account"].lower() != alamat_pengelola.lower():
+                    st.error(
+                        "Akun MetaMask bukan akun pengelola. "
+                        "Gunakan akun yang melakukan deploy smart contract."
+                    )
+
+                else:
+                    try:
+                        alamat_wallet_kelola = w3.to_checksum_address(
+                            wallet_kelola["account"]
+                        )
+
+                        calldata_kelola = (
+                            kontrak.functions.manageDonation(
+                                int(pilihan_donasi),
+                                tujuan_penggunaan.strip()
+                            )._encode_transaction_data()
+                        )
+
+                        javascript_kelola = f"""
+                        (async () => {{
+                            const provider =
+                                window.parent.ethereum || window.ethereum;
+
+                            if (!provider) {{
                                 return JSON.stringify({{
-                                    error: "Akun MetaMask tidak sesuai."
+                                    error: "MetaMask tidak ditemukan."
                                 }});
                             }}
 
-                            const txHash = await provider.request({{
-                                method: "eth_sendTransaction",
-                                params: [{{
-                                    from: "{alamat_wallet_kelola}",
-                                    to: "{kontrak.address}",
-                                    data: "{calldata_kelola}"
-                                }}]
-                            }});
+                            try {{
+                                const accounts = await provider.request({{
+                                    method: "eth_requestAccounts"
+                                }});
 
-                            return JSON.stringify({{
-                                txHash: txHash
-                            }});
+                                if (
+                                    accounts[0].toLowerCase() !==
+                                    "{alamat_wallet_kelola}".toLowerCase()
+                                ) {{
+                                    return JSON.stringify({{
+                                        error: "Akun MetaMask tidak sesuai."
+                                    }});
+                                }}
 
-                        }} catch (error) {{
-                            return JSON.stringify({{
-                                error: error.message
-                            }});
-                        }}
-                    }})()
-                    """
+                                const txHash = await provider.request({{
+                                    method: "eth_sendTransaction",
+                                    params: [{{
+                                        from: "{alamat_wallet_kelola}",
+                                        to: "{kontrak.address}",
+                                        data: "{calldata_kelola}"
+                                    }}]
+                                }});
 
-                    st.info(
-                        "Silakan konfirmasi pengelolaan donasi di MetaMask."
-                    )
+                                return JSON.stringify({{
+                                    txHash: txHash
+                                }});
 
-                    hasil_kelola = streamlit_js_eval(
-                        js_expressions=javascript_kelola,
-                        want_output=True,
-                        key="PENGELOLAAN_DONASI_METAMASK"
-                    )
+                            }} catch (error) {{
+                                return JSON.stringify({{
+                                    error: error.message
+                                }});
+                            }}
+                        }})()
+                        """
 
-                    if hasil_kelola and hasil_kelola != "null":
+                        st.info(
+                            "Silakan konfirmasi pengelolaan donasi di MetaMask."
+                        )
 
-                        if isinstance(hasil_kelola, str):
-                            hasil = json.loads(hasil_kelola)
-                        else:
-                            hasil = hasil_kelola
+                        hasil_kelola = streamlit_js_eval(
+                            js_expressions=javascript_kelola,
+                            want_output=True,
+                            key="PENGELOLAAN_DONASI_METAMASK"
+                        )
 
-                        if "error" in hasil:
-                            st.error(hasil["error"])
+                        if hasil_kelola and hasil_kelola != "null":
 
-                        elif "txHash" in hasil:
-
-                            with st.spinner(
-                                "Menunggu transaksi blockchain..."
-                            ):
-                                receipt_kelola = (
-                                    w3.eth.wait_for_transaction_receipt(
-                                        hasil["txHash"]
-                                    )
-                                )
-
-                            if receipt_kelola.status == 1:
-                                st.success(
-                                    "Donasi berhasil dikelola!"
-                                )
-                                st.write("**Transaction Hash:**")
-                                st.code(
-                                    receipt_kelola.transactionHash.hex()
-                                )
-                                st.rerun()
-
+                            if isinstance(hasil_kelola, str):
+                                hasil = json.loads(hasil_kelola)
                             else:
-                                st.error("Transaksi pengelolaan gagal.")
+                                hasil = hasil_kelola
 
-                except Exception as error:
-                    st.error("Gagal mengelola donasi.")
-                    st.code(str(error))
+                            if "error" in hasil:
+                                st.error(hasil["error"])
 
-    else:
-        st.info("Belum ada donasi yang dapat dikelola.")
+                            elif "txHash" in hasil:
+
+                                with st.spinner(
+                                    "Menunggu transaksi blockchain..."
+                                ):
+                                    receipt_kelola = (
+                                        w3.eth.wait_for_transaction_receipt(
+                                            hasil["txHash"]
+                                        )
+                                    )
+
+                                if receipt_kelola.status == 1:
+                                    st.success(
+                                        "Donasi berhasil dikelola!"
+                                    )
+                                    st.write("**Transaction Hash:**")
+                                    st.code(
+                                        receipt_kelola.transactionHash.hex()
+                                    )
+                                    st.rerun()
+
+                                else:
+                                    st.error("Transaksi pengelolaan gagal.")
+
+                    except Exception as error:
+                        st.error("Gagal mengelola donasi.")
+                        st.code(str(error))
+
+        else:
+            st.info("Belum ada donasi yang dapat dikelola.")
         
         
-    # ==========================================
-    # FORM PENYALURAN DONASI
-    # ==========================================
+        # ==========================================
+        # FORM PENYALURAN DONASI
+        # ==========================================
 
-    st.divider()
-    st.markdown("## 📦 Penyaluran Donasi")
-    st.caption(
-        "Catat penyaluran bantuan kepada penerima melalui blockchain."
-    )
+        st.divider()
+        st.markdown("## 📦 Penyaluran Donasi")
+        st.caption(
+            "Catat penyaluran bantuan kepada penerima melalui blockchain."
+        )
 
-    kampanye_tersedia = []
+        kampanye_tersedia = []
 
-    if not data_donasi.empty:
-        donasi_dikelola = data_donasi[
-            data_donasi["Status"] == 1
-        ]
+        if not data_donasi.empty:
+            donasi_dikelola = data_donasi[
+                data_donasi["Status"] == 1
+            ]
 
-        for campaign in donasi_dikelola["Kampanye"].unique():
-            saldo = kontrak.functions.campaignBalance(
-                campaign
-            ).call()
-
-            if saldo > 0:
-                kampanye_tersedia.append(campaign)
-
-    if kampanye_tersedia:
-
-        with st.container(border=True):
-            with st.form("form_penyaluran_donasi"):
-
-                kampanye_pilih = st.selectbox(
-                    "Pilih Kampanye",
-                    options=kampanye_tersedia
-                )
-
-                saldo_kampanye = kontrak.functions.campaignBalance(
-                    kampanye_pilih
+            for campaign in donasi_dikelola["Kampanye"].unique():
+                saldo = kontrak.functions.campaignBalance(
+                    campaign
                 ).call()
 
-                st.info(
-                    "Saldo kampanye: Rp "
-                    + f"{saldo_kampanye:,}".replace(",", ".")
-                )
+                if saldo > 0:
+                    kampanye_tersedia.append(campaign)
 
-                nama_penerima = st.text_input(
-                    "Nama Penerima Bantuan",
-                    placeholder="Masukkan nama penerima"
-                )
+        if kampanye_tersedia:
 
-                jumlah_penyaluran = st.number_input(
-                    "Jumlah Bantuan (Rp)",
-                    min_value=1,
-                    max_value=int(saldo_kampanye),
-                    step=1000,
-                    value=min(10000, int(saldo_kampanye))
-                )
+            with st.container(border=True):
+                with st.form("form_penyaluran_donasi"):
 
-                submit_penyaluran = st.form_submit_button(
-                    "📦 Salurkan Donasi melalui MetaMask",
-                    use_container_width=True
-                )
-
-        if submit_penyaluran:
-
-            wallet_penyaluran = st.session_state.get(
-                "wallet_data"
-            )
-
-            if not nama_penerima.strip():
-                st.error("Nama penerima wajib diisi.")
-
-            elif not wallet_penyaluran:
-                st.error("Hubungkan MetaMask terlebih dahulu.")
-
-            elif wallet_penyaluran.get("chainId") != 31337:
-                st.error("Pilih jaringan Hardhat Local.")
-
-            elif wallet_penyaluran.get("account", "").lower() != (
-                alamat_pengelola.lower()
-            ):
-                st.error(
-                    "Gunakan akun MetaMask milik pengelola."
-                )
-
-            else:
-                try:
-                    calldata_penyaluran = (
-                        kontrak.functions.distributeDonation(
-                            kampanye_pilih,
-                            nama_penerima.strip(),
-                            int(jumlah_penyaluran)
-                        )._encode_transaction_data()
+                    kampanye_pilih = st.selectbox(
+                        "Pilih Kampanye",
+                        options=kampanye_tersedia
                     )
 
-                    javascript_penyaluran = f"""
-                    (async () => {{
-                        const provider =
-                            window.parent.ethereum || window.ethereum;
+                    saldo_kampanye = kontrak.functions.campaignBalance(
+                        kampanye_pilih
+                    ).call()
 
-                        if (!provider) {{
-                            return JSON.stringify({{
-                                error: "MetaMask tidak ditemukan."
-                            }});
-                        }}
-
-                        try {{
-                            const accounts = await provider.request({{
-                                method: "eth_requestAccounts"
-                            }});
-
-                            const txHash = await provider.request({{
-                                method: "eth_sendTransaction",
-                                params: [{{
-                                    from: accounts[0],
-                                    to: "{kontrak.address}",
-                                    data: "{calldata_penyaluran}"
-                                }}]
-                            }});
-
-                            return JSON.stringify({{
-                                hash: txHash
-                            }});
-
-                        }} catch (error) {{
-                            return JSON.stringify({{
-                                error: error.message
-                            }});
-                        }}
-                    }})()
-                    """
-
-                    hasil_penyaluran = streamlit_js_eval(
-                        js_expressions=javascript_penyaluran,
-                        want_output=True,
-                        key="PENYALURAN_DONASI_METAMASK"
+                    st.info(
+                        "Saldo kampanye: Rp "
+                        + f"{saldo_kampanye:,}".replace(",", ".")
                     )
 
-                    if hasil_penyaluran:
-                        if isinstance(hasil_penyaluran, str):
-                            hasil_data = json.loads(
-                                hasil_penyaluran
-                            )
-                        else:
-                            hasil_data = hasil_penyaluran
-
-                        if hasil_data.get("error"):
-                            st.error(hasil_data["error"])
-
-                        elif hasil_data.get("hash"):
-
-                            with st.spinner(
-                                "Menunggu transaksi blockchain..."
-                            ):
-                                hash_transaksi = hasil_data["hash"]
-
-                                receipt = (
-                                    w3.eth.wait_for_transaction_receipt(
-                                        hash_transaksi
-                                    )
-                                )
-
-                            if receipt.status == 1:
-                                st.success(
-                                    "Penyaluran donasi berhasil dicatat!"
-                                )
-
-                                st.write("Transaction Hash:")
-                                st.code(hash_transaksi)
-
-                                st.write(
-                                    "Block Number:",
-                                    receipt.blockNumber
-                                )
-
-                                st.rerun()
-
-                except Exception as error:
-                    st.error("Penyaluran donasi gagal.")
-                    st.code(str(error))
-
-    else:
-        st.info(
-            "Belum ada kampanye dengan donasi berstatus "
-            "Dikelola dan saldo yang tersedia."
-        )
-        
-        
-    # ==========================================
-    # FORM VERIFIKASI DONASI
-    # ==========================================
-
-    st.divider()
-    st.markdown("## 🔍 Verifikasi Donasi")
-    st.caption(
-        "Pengawas memverifikasi donasi yang telah disalurkan "
-        "melalui smart contract."
-    )
-
-    alamat_pengawas = kontrak.functions.pengawas().call()
-
-    st.write("Alamat Pengawas Terdaftar:")
-    st.code(alamat_pengawas)
-
-    kampanye_verifikasi = []
-
-    if not data_donasi.empty:
-        donasi_disalurkan = data_donasi[
-            data_donasi["Status"] == 2
-        ]
-
-        kampanye_verifikasi = (
-            donasi_disalurkan["Kampanye"].unique().tolist()
-        )
-
-    if kampanye_verifikasi:
-
-        with st.container(border=True):
-            with st.form("form_verifikasi_donasi"):
-
-                pilihan_kampanye_verifikasi = st.selectbox(
-                    "Pilih Kampanye untuk Diverifikasi",
-                    options=kampanye_verifikasi
-                )
-
-                submit_verifikasi = st.form_submit_button(
-                    "🔍 Verifikasi Donasi melalui MetaMask",
-                    use_container_width=True
-                )
-
-        if submit_verifikasi:
-
-            wallet_verifikasi = st.session_state.get("wallet_data")
-
-            if not wallet_verifikasi or "account" not in wallet_verifikasi:
-                st.error("Hubungkan MetaMask terlebih dahulu.")
-
-            elif wallet_verifikasi.get("chainId") != 31337:
-                st.error("Pilih jaringan Hardhat Local.")
-
-            elif wallet_verifikasi["account"].lower() != alamat_pengawas.lower():
-                st.error(
-                    "Akun MetaMask bukan akun pengawas terdaftar."
-                )
-
-            else:
-                try:
-                    calldata_verifikasi = (
-                        kontrak.functions.verifyDonation(
-                            pilihan_kampanye_verifikasi
-                        )._encode_transaction_data()
+                    nama_penerima = st.text_input(
+                        "Nama Penerima Bantuan",
+                        placeholder="Masukkan nama penerima"
                     )
 
-                    alamat_wallet_verifikasi = w3.to_checksum_address(
-                        wallet_verifikasi["account"]
+                    jumlah_penyaluran = st.number_input(
+                        "Jumlah Bantuan (Rp)",
+                        min_value=1,
+                        max_value=int(saldo_kampanye),
+                        step=1000,
+                        value=min(10000, int(saldo_kampanye))
                     )
 
-                    javascript_verifikasi = f"""
-                    (async () => {{
-                        const provider =
-                            window.parent.ethereum || window.ethereum;
+                    submit_penyaluran = st.form_submit_button(
+                        "📦 Salurkan Donasi melalui MetaMask",
+                        use_container_width=True
+                    )
 
-                        try {{
-                            const accounts = await provider.request({{
-                                method: "eth_requestAccounts"
-                            }});
+            if submit_penyaluran:
 
-                            if (
-                                accounts[0].toLowerCase() !==
-                                "{alamat_wallet_verifikasi}".toLowerCase()
-                            ) {{
+                wallet_penyaluran = st.session_state.get(
+                    "wallet_data"
+                )
+
+                if not nama_penerima.strip():
+                    st.error("Nama penerima wajib diisi.")
+
+                elif not wallet_penyaluran:
+                    st.error("Hubungkan MetaMask terlebih dahulu.")
+
+                elif wallet_penyaluran.get("chainId") != 31337:
+                    st.error("Pilih jaringan Hardhat Local.")
+
+                elif wallet_penyaluran.get("account", "").lower() != (
+                    alamat_pengelola.lower()
+                ):
+                    st.error(
+                        "Gunakan akun MetaMask milik pengelola."
+                    )
+
+                else:
+                    try:
+                        calldata_penyaluran = (
+                            kontrak.functions.distributeDonation(
+                                kampanye_pilih,
+                                nama_penerima.strip(),
+                                int(jumlah_penyaluran)
+                            )._encode_transaction_data()
+                        )
+
+                        javascript_penyaluran = f"""
+                        (async () => {{
+                            const provider =
+                                window.parent.ethereum || window.ethereum;
+
+                            if (!provider) {{
                                 return JSON.stringify({{
-                                    error: "Akun MetaMask tidak sesuai."
+                                    error: "MetaMask tidak ditemukan."
                                 }});
                             }}
 
-                            const txHash = await provider.request({{
-                                method: "eth_sendTransaction",
-                                params: [{{
-                                    from: accounts[0],
-                                    to: "{kontrak.address}",
-                                    data: "{calldata_verifikasi}"
-                                }}]
-                            }});
+                            try {{
+                                const accounts = await provider.request({{
+                                    method: "eth_requestAccounts"
+                                }});
 
-                            return JSON.stringify({{hash: txHash}});
+                                const txHash = await provider.request({{
+                                    method: "eth_sendTransaction",
+                                    params: [{{
+                                        from: accounts[0],
+                                        to: "{kontrak.address}",
+                                        data: "{calldata_penyaluran}"
+                                    }}]
+                                }});
 
-                        }} catch (error) {{
-                            return JSON.stringify({{
-                                error: error.message
-                            }});
-                        }}
-                    }})()
-                    """
+                                return JSON.stringify({{
+                                    hash: txHash
+                                }});
 
-                    st.info(
-                        "Silakan konfirmasi verifikasi di MetaMask."
-                    )
+                            }} catch (error) {{
+                                return JSON.stringify({{
+                                    error: error.message
+                                }});
+                            }}
+                        }})()
+                        """
 
-                    hasil_verifikasi = streamlit_js_eval(
-                        js_expressions=javascript_verifikasi,
-                        want_output=True,
-                        key="VERIFIKASI_DONASI_METAMASK"
-                    )
+                        hasil_penyaluran = streamlit_js_eval(
+                            js_expressions=javascript_penyaluran,
+                            want_output=True,
+                            key="PENYALURAN_DONASI_METAMASK"
+                        )
 
-                    if hasil_verifikasi and hasil_verifikasi != "null":
-
-                        if isinstance(hasil_verifikasi, str):
-                            hasil_data = json.loads(hasil_verifikasi)
-                        else:
-                            hasil_data = hasil_verifikasi
-
-                        if hasil_data.get("error"):
-                            st.error(hasil_data["error"])
-
-                        elif hasil_data.get("hash"):
-
-                            with st.spinner(
-                                "Menunggu transaksi blockchain..."
-                            ):
-                                receipt_verifikasi = (
-                                    w3.eth.wait_for_transaction_receipt(
-                                        hasil_data["hash"]
-                                    )
+                        if hasil_penyaluran:
+                            if isinstance(hasil_penyaluran, str):
+                                hasil_data = json.loads(
+                                    hasil_penyaluran
                                 )
-
-                            if receipt_verifikasi.status == 1:
-                                st.success(
-                                    "Transaksi verifikasi berhasil dicatat!"
-                                )
-                                st.write("Transaction Hash:")
-                                st.code(hasil_data["hash"])
-                                st.rerun()
-
                             else:
-                                st.error("Transaksi verifikasi gagal.")
+                                hasil_data = hasil_penyaluran
 
-                except Exception as error:
-                    st.error("Gagal memverifikasi donasi.")
-                    st.code(str(error))
+                            if hasil_data.get("error"):
+                                st.error(hasil_data["error"])
 
-    else:
-        st.info(
-            "Belum ada donasi berstatus Disalurkan "
-            "yang dapat diverifikasi."
-        )
+                            elif hasil_data.get("hash"):
 
+                                with st.spinner(
+                                    "Menunggu transaksi blockchain..."
+                                ):
+                                    hash_transaksi = hasil_data["hash"]
 
-    # ==========================================
-    # RINGKASAN DASHBOARD
-    # ==========================================
+                                    receipt = (
+                                        w3.eth.wait_for_transaction_receipt(
+                                            hash_transaksi
+                                        )
+                                    )
 
-    st.divider()
+                                if receipt.status == 1:
+                                    st.success(
+                                        "Penyaluran donasi berhasil dicatat!"
+                                    )
 
-    st.markdown(
-        '<div class="section-heading">📈 Ringkasan Donasi</div>',
-        unsafe_allow_html=True
-    )
+                                    st.write("Transaction Hash:")
+                                    st.code(hash_transaksi)
 
-    st.markdown(
-        '<div class="section-description">'
-        'Ikhtisar catatan donasi yang tersimpan pada blockchain.'
-        '</div>',
-        unsafe_allow_html=True
-    )
+                                    st.write(
+                                        "Block Number:",
+                                        receipt.blockNumber
+                                    )
 
-    if not data_donasi.empty:
+                                    st.rerun()
 
-        total_donasi = int(data_donasi["Jumlah"].sum())
+                    except Exception as error:
+                        st.error("Penyaluran donasi gagal.")
+                        st.code(str(error))
 
-        jumlah_kampanye = data_donasi["Kampanye"].nunique()
-
-        jumlah_terverifikasi = int(
-            (data_donasi["Status"] == 3).sum()
-        )
-
-    else:
-
-        total_donasi = 0
-        jumlah_kampanye = 0
-        jumlah_terverifikasi = 0
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.metric(
-            "💰 Total Donasi Tercatat",
-            f"Rp {total_donasi:,}".replace(",", ".")
-        )
-
-    with col2:
-        st.metric(
-            "📢 Jumlah Kampanye",
-            jumlah_kampanye
-        )
-
-    with col3:
-        st.metric(
-            "🔍 Donasi Terverifikasi",
-            jumlah_terverifikasi
-        )
-
-    st.caption(
-        "Catatan: nominal merupakan data yang tersimpan "
-        "dalam smart contract, bukan bukti transfer uang."
-    )
-
-
-    # ==========================================
-    # GRAFIK DONASI
-    # ==========================================
-
-    st.divider()
-
-    st.markdown(
-        '<div class="section-heading">📊 Statistik Donasi</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="section-description">'
-        'Visualisasi nominal donasi berdasarkan kampanye.'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    if not data_donasi.empty:
-
-        data_grafik = (
-            data_donasi.groupby("Kampanye")["Jumlah"]
-            .sum()
-            .to_frame()
-        )
-
-        st.bar_chart(data_grafik)
-
-    else:
-        st.info(
-            "Belum ada donasi yang tercatat di smart contract."
-        )
-
-
-    # ==========================================
-    # RIWAYAT DONASI
-    # ==========================================
-
-    st.divider()
-
-    st.markdown(
-        '<div class="section-heading">📋 Riwayat Donasi</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="section-description">'
-        'Daftar catatan donasi yang tersimpan pada blockchain.'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    if not data_donasi.empty:
-
-        tampilan = data_donasi.copy()
-
-        status_map = {
-            0: "Menunggu diproses",
-            1: "Dikelola",
-            2: "Disalurkan",
-            3: "Terverifikasi"
-        }
-
-        tampilan["Status"] = tampilan["Status"].map(
-            status_map
-        ).fillna("Tidak diketahui")
-
-        tampilan["Jumlah"] = tampilan["Jumlah"].apply(
-            lambda jumlah: (
-                "Rp " + f"{jumlah:,}".replace(",", ".")
+        else:
+            st.info(
+                "Belum ada kampanye dengan donasi berstatus "
+                "Dikelola dan saldo yang tersedia."
             )
+        
+        
+        # ==========================================
+    with tab_verifikasi:
+        # FORM VERIFIKASI DONASI
+        # ==========================================
+
+        st.divider()
+        st.markdown("## 🔍 Verifikasi Donasi")
+        st.caption(
+            "Pengawas memverifikasi donasi yang telah disalurkan "
+            "melalui smart contract."
         )
 
-        tampilan["Waktu"] = tampilan["Timestamp"].apply(
-            lambda ts: datetime.fromtimestamp(ts).strftime(
-                "%d-%m-%Y %H:%M:%S"
-            ) if ts > 0 else "-"
+        alamat_pengawas = kontrak.functions.pengawas().call()
+
+        st.write("Alamat Pengawas Terdaftar:")
+        st.code(alamat_pengawas)
+
+        kampanye_verifikasi = []
+
+        if not data_donasi.empty:
+            donasi_disalurkan = data_donasi[
+                data_donasi["Status"] == 2
+            ]
+
+            kampanye_verifikasi = (
+                donasi_disalurkan["Kampanye"].unique().tolist()
+            )
+
+        if kampanye_verifikasi:
+
+            with st.container(border=True):
+                with st.form("form_verifikasi_donasi"):
+
+                    pilihan_kampanye_verifikasi = st.selectbox(
+                        "Pilih Kampanye untuk Diverifikasi",
+                        options=kampanye_verifikasi
+                    )
+
+                    submit_verifikasi = st.form_submit_button(
+                        "🔍 Verifikasi Donasi melalui MetaMask",
+                        use_container_width=True
+                    )
+
+            if submit_verifikasi:
+
+                wallet_verifikasi = st.session_state.get("wallet_data")
+
+                if not wallet_verifikasi or "account" not in wallet_verifikasi:
+                    st.error("Hubungkan MetaMask terlebih dahulu.")
+
+                elif wallet_verifikasi.get("chainId") != 31337:
+                    st.error("Pilih jaringan Hardhat Local.")
+
+                elif wallet_verifikasi["account"].lower() != alamat_pengawas.lower():
+                    st.error(
+                        "Akun MetaMask bukan akun pengawas terdaftar."
+                    )
+
+                else:
+                    try:
+                        calldata_verifikasi = (
+                            kontrak.functions.verifyDonation(
+                                pilihan_kampanye_verifikasi
+                            )._encode_transaction_data()
+                        )
+
+                        alamat_wallet_verifikasi = w3.to_checksum_address(
+                            wallet_verifikasi["account"]
+                        )
+
+                        javascript_verifikasi = f"""
+                        (async () => {{
+                            const provider =
+                                window.parent.ethereum || window.ethereum;
+
+                            try {{
+                                const accounts = await provider.request({{
+                                    method: "eth_requestAccounts"
+                                }});
+
+                                if (
+                                    accounts[0].toLowerCase() !==
+                                    "{alamat_wallet_verifikasi}".toLowerCase()
+                                ) {{
+                                    return JSON.stringify({{
+                                        error: "Akun MetaMask tidak sesuai."
+                                    }});
+                                }}
+
+                                const txHash = await provider.request({{
+                                    method: "eth_sendTransaction",
+                                    params: [{{
+                                        from: accounts[0],
+                                        to: "{kontrak.address}",
+                                        data: "{calldata_verifikasi}"
+                                    }}]
+                                }});
+
+                                return JSON.stringify({{hash: txHash}});
+
+                            }} catch (error) {{
+                                return JSON.stringify({{
+                                    error: error.message
+                                }});
+                            }}
+                        }})()
+                        """
+
+                        st.info(
+                            "Silakan konfirmasi verifikasi di MetaMask."
+                        )
+
+                        hasil_verifikasi = streamlit_js_eval(
+                            js_expressions=javascript_verifikasi,
+                            want_output=True,
+                            key="VERIFIKASI_DONASI_METAMASK"
+                        )
+
+                        if hasil_verifikasi and hasil_verifikasi != "null":
+
+                            if isinstance(hasil_verifikasi, str):
+                                hasil_data = json.loads(hasil_verifikasi)
+                            else:
+                                hasil_data = hasil_verifikasi
+
+                            if hasil_data.get("error"):
+                                st.error(hasil_data["error"])
+
+                            elif hasil_data.get("hash"):
+
+                                with st.spinner(
+                                    "Menunggu transaksi blockchain..."
+                                ):
+                                    receipt_verifikasi = (
+                                        w3.eth.wait_for_transaction_receipt(
+                                            hasil_data["hash"]
+                                        )
+                                    )
+
+                                if receipt_verifikasi.status == 1:
+                                    st.success(
+                                        "Transaksi verifikasi berhasil dicatat!"
+                                    )
+                                    st.write("Transaction Hash:")
+                                    st.code(hasil_data["hash"])
+                                    st.rerun()
+
+                                else:
+                                    st.error("Transaksi verifikasi gagal.")
+
+                    except Exception as error:
+                        st.error("Gagal memverifikasi donasi.")
+                        st.code(str(error))
+
+        else:
+            st.info(
+                "Belum ada donasi berstatus Disalurkan "
+                "yang dapat diverifikasi."
+            )
+
+
+        # ==========================================
+    with tab_dashboard:
+        # RINGKASAN DASHBOARD
+        # ==========================================
+
+        st.divider()
+
+        st.markdown(
+            '<div class="section-heading">📈 Ringkasan Donasi</div>',
+            unsafe_allow_html=True
         )
 
-        st.dataframe(
-            tampilan[
-                [
-                    "ID",
-                    "Kampanye",
-                    "Donatur",
-                    "Alamat Donatur",
-                    "Jumlah",
-                    "Tujuan",
-                    "Status",
-                    "Waktu"
-                ]
-            ],
-            use_container_width=True,
-            hide_index=True
+        st.markdown(
+            '<div class="section-description">'
+            'Ikhtisar catatan donasi yang tersimpan pada blockchain.'
+            '</div>',
+            unsafe_allow_html=True
         )
 
-    else:
+        if not data_donasi.empty:
 
-        st.info(
-            "Riwayat donasi masih kosong. "
-            "Data akan tampil setelah catatan donasi "
-            "tersimpan pada smart contract."
+            total_donasi = int(data_donasi["Jumlah"].sum())
+
+            jumlah_kampanye = data_donasi["Kampanye"].nunique()
+
+            jumlah_terverifikasi = int(
+                (data_donasi["Status"] == 3).sum()
+            )
+
+        else:
+
+            total_donasi = 0
+            jumlah_kampanye = 0
+            jumlah_terverifikasi = 0
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric(
+                "💰 Total Donasi Tercatat",
+                f"Rp {total_donasi:,}".replace(",", ".")
+            )
+
+        with col2:
+            st.metric(
+                "📢 Jumlah Kampanye",
+                jumlah_kampanye
+            )
+
+        with col3:
+            st.metric(
+                "🔍 Donasi Terverifikasi",
+                jumlah_terverifikasi
+            )
+
+        st.caption(
+            "Catatan: nominal merupakan data yang tersimpan "
+            "dalam smart contract, bukan bukti transfer uang."
         )
 
 
-    # ==========================================
-    # INFORMASI BLOCKCHAIN
-    # ==========================================
+        # ==========================================
+    with tab_dashboard:
+            # GRAFIK DONASI
+            # ==========================================
 
-    st.divider()
+            st.divider()
 
-    st.markdown(
-        '<div class="section-heading">🔗 Informasi Blockchain</div>',
-        unsafe_allow_html=True
-    )
+            st.markdown(
+                '<div class="section-heading">📊 Statistik Donasi</div>',
+                unsafe_allow_html=True
+            )
 
-    st.markdown(
-        '<div class="section-description">'
-        'Informasi jaringan dan smart contract yang digunakan.'
-        '</div>',
-        unsafe_allow_html=True
-    )
+            st.markdown(
+                '<div class="section-description">'
+                'Visualisasi nominal donasi berdasarkan kampanye.'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
-    col4, col5 = st.columns(2)
+            if not data_donasi.empty:
 
-    with col4:
-        st.info(
-            f"**Jaringan:** Hardhat Local\n\n"
-            f"**Chain ID:** {w3.eth.chain_id}\n\n"
-            f"**Jumlah Blok:** {w3.eth.block_number}"
+                data_grafik = (
+                    data_donasi.groupby("Kampanye")["Jumlah"]
+                    .sum()
+                    .to_frame()
+                )
+
+                st.bar_chart(data_grafik)
+
+            else:
+                st.info(
+                    "Belum ada donasi yang tercatat di smart contract."
+                )
+
+
+            # ==========================================
+    with tab_riwayat:
+        # RIWAYAT DONASI
+        # ==========================================
+
+        st.divider()
+
+        st.markdown(
+            '<div class="section-heading">📋 Riwayat Donasi</div>',
+            unsafe_allow_html=True
         )
 
-    with col5:
-        st.info(
-            f"**Alamat Smart Contract:**\n\n"
-            f"{kontrak.address}"
+        st.markdown(
+            '<div class="section-description">'
+            'Daftar catatan donasi yang tersimpan pada blockchain.'
+            '</div>',
+            unsafe_allow_html=True
         )
 
-    st.write("**Alamat Pengelola:**")
-    st.code(alamat_pengelola)
+        if not data_donasi.empty:
 
-    if st.button("🔄 Segarkan Data"):
+            tampilan = data_donasi.copy()
 
-        st.cache_resource.clear()
-        st.rerun()
+            status_map = {
+                0: "Menunggu diproses",
+                1: "Dikelola",
+                2: "Disalurkan",
+                3: "Terverifikasi"
+            }
+
+            tampilan["Status"] = tampilan["Status"].map(
+                status_map
+            ).fillna("Tidak diketahui")
+
+            tampilan["Jumlah"] = tampilan["Jumlah"].apply(
+                lambda jumlah: (
+                    "Rp " + f"{jumlah:,}".replace(",", ".")
+                )
+            )
+
+            tampilan["Waktu"] = tampilan["Timestamp"].apply(
+                lambda ts: datetime.fromtimestamp(ts).strftime(
+                    "%d-%m-%Y %H:%M:%S"
+                ) if ts > 0 else "-"
+            )
+
+            st.dataframe(
+                tampilan[
+                    [
+                        "ID",
+                        "Kampanye",
+                        "Donatur",
+                        "Alamat Donatur",
+                        "Jumlah",
+                        "Tujuan",
+                        "Status",
+                        "Waktu"
+                    ]
+                ],
+                use_container_width=True,
+                hide_index=True
+            )
+            
+            
+            st.divider()
+            st.markdown("### 🔎 Detail Data Donasi")
+
+            daftar_id = data_donasi["ID"].astype(int).tolist()
+
+            id_terpilih = st.selectbox(
+                "Pilih ID Donasi untuk melihat detail",
+                options=daftar_id,
+                key="detail_donasi_id"
+            )
+
+            if id_terpilih is not None:
+
+                detail = kontrak.functions.getDonation(
+                    int(id_terpilih)
+                ).call()
+
+                status_detail = {
+                    0: "Menunggu diproses",
+                    1: "Dikelola",
+                    2: "Disalurkan",
+                    3: "Terverifikasi"
+                }
+
+                st.markdown("#### 📋 Informasi Donasi")
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.write("**ID Donasi**")
+                    st.info(str(detail[0]))
+
+                    st.write("**ID Kampanye**")
+                    st.info(detail[1])
+
+                    st.write("**Nama Donatur**")
+                    st.info(detail[2])
+
+                    st.write("**Alamat Wallet Donatur**")
+                    st.code(detail[3])
+
+                with col2:
+                    st.write("**Nominal Donasi**")
+                    st.info(
+                        "Rp " + f"{int(detail[4]):,}".replace(",", ".")
+                    )
+
+                    st.write("**Tujuan Penggunaan**")
+                    st.info(detail[5] if detail[5] else "Belum ditentukan")
+
+                    st.write("**Status Donasi**")
+                    st.success(
+                        status_detail.get(
+                            int(detail[6]),
+                            "Tidak diketahui"
+                        )
+                    )
+
+                    st.write("**Waktu Pencatatan**")
+                    st.info(
+                        datetime.fromtimestamp(
+                            int(detail[7])
+                        ).strftime("%d-%m-%Y %H:%M:%S")
+                        if int(detail[7]) > 0 else "-"
+                    )
+
+
+        else:
+
+            st.info(
+                "Riwayat donasi masih kosong. "
+                "Data akan tampil setelah catatan donasi "
+                "tersimpan pada smart contract."
+            )
+
+
+        # ==========================================
+    with tab_blockchain:
+        # INFORMASI BLOCKCHAIN
+        # ==========================================
+
+        st.divider()
+
+        st.markdown(
+            '<div class="section-heading">🔗 Informasi Blockchain</div>',
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            '<div class="section-description">'
+            'Informasi jaringan dan smart contract yang digunakan.'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        col4, col5 = st.columns(2)
+
+        with col4:
+            st.info(
+                f"**Jaringan:** Hardhat Local\n\n"
+                f"**Chain ID:** {w3.eth.chain_id}\n\n"
+                f"**Jumlah Blok:** {w3.eth.block_number}"
+            )
+
+        with col5:
+            st.info(
+                f"**Alamat Smart Contract:**\n\n"
+                f"{kontrak.address}"
+            )
+
+        st.write("**Alamat Pengelola:**")
+        st.code(alamat_pengelola)
+
+        if st.button("🔄 Segarkan Data"):
+
+            st.cache_resource.clear()
+            st.rerun()
 
 
 except Exception as error:
